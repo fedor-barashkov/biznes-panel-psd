@@ -1,0 +1,1226 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Бизнес-панель ПСД</title>
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<style>
+/* Layout: окно Windows 11 (Fluent) — заголовок, боковое меню модулей, рабочая область; светлая и тёмная тема */
+:root{
+  --bg:#f3f3f3;--surface:#ffffff;--surface-2:#f7f7f7;--side:#ebebeb;--title:#ebebeb;--line:#e1e1e1;
+  --fg:#1b1b1b;--fg-2:#5d5d5d;--fg-3:#8a8a8a;
+  --accent:#005fb8;--accent-fg:#ffffff;--accent-soft:#e3eefa;
+  --ok:#0f7b0f;--ok-soft:#e3f2e3;--warn:#8a5300;--warn-soft:#fff1c7;--bad:#c42b1c;--bad-soft:#fde7e9;--info:#005fb8;--info-soft:#e3eefa;
+  --r:8px;--r-sm:4px;
+  --font:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Noto Sans",sans-serif;
+  --font-d:"Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,"Noto Sans",sans-serif;
+  --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 2px 6px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#202020;--surface:#2b2b2b;--surface-2:#323232;--side:#1c1c1c;--title:#1c1c1c;--line:#3b3b3b;
+  --fg:#f3f3f3;--fg-2:#c8c8c8;--fg-3:#9a9a9a;
+  --accent:#60cdff;--accent-fg:#00283d;--accent-soft:#1d3747;
+  --ok:#7fd572;--ok-soft:#1e3320;--warn:#ffd75e;--warn-soft:#3a3212;--bad:#ff9aa4;--bad-soft:#47272a;--info:#60cdff;--info-soft:#1d3747;
+  --shadow:none;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#202020;--surface:#2b2b2b;--surface-2:#323232;--side:#1c1c1c;--title:#1c1c1c;--line:#3b3b3b;
+  --fg:#f3f3f3;--fg-2:#c8c8c8;--fg-3:#9a9a9a;
+  --accent:#60cdff;--accent-fg:#00283d;--accent-soft:#1d3747;
+  --ok:#7fd572;--ok-soft:#1e3320;--warn:#ffd75e;--warn-soft:#3a3212;--bad:#ff9aa4;--bad-soft:#47272a;--info:#60cdff;--info-soft:#1d3747;
+  --shadow:none;color-scheme:dark}
+
+html,body{height:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:14px;line-height:1.45}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{position:relative;display:grid;grid-template-rows:auto 1fr;height:100%;overflow:hidden}
+
+.titlebar{display:flex;align-items:center;gap:12px;background:var(--title);border-bottom:1px solid var(--line);padding-block:6px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px));min-height:46px}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--font-d);font-weight:700;white-space:nowrap}
+.brand-mark{width:24px;height:24px;border-radius:var(--r-sm);background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-size:11px;font-weight:700}
+.search{flex:1;max-width:440px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:5px 10px;color:var(--fg-3)}
+.search input{border:0;background:transparent;outline:0;flex:1;min-width:0;color:var(--fg)}
+.search kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:4px;padding:0 4px}
+.tools{display:flex;align-items:center;gap:6px;margin-left:auto}
+.icon-btn{border:0;background:transparent;width:34px;height:34px;border-radius:var(--r);display:grid;place-items:center;cursor:pointer;color:var(--fg-2);position:relative;flex:none}
+.icon-btn:hover{background:var(--surface-2);color:var(--fg)}
+.dot{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--bad)}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.win{display:flex;margin-left:6px}
+.win span{width:44px;height:34px;display:grid;place-items:center;color:var(--fg-2)}
+.win span:last-child:hover{background:#c42b1c;color:#fff}
+.sample{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--warn-soft);color:var(--warn);white-space:nowrap}
+
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:0}
+.side{background:var(--side);border-right:1px solid var(--line);overflow:auto;padding:12px 10px 20px;display:flex;flex-direction:column;gap:14px}
+.nav-group{display:flex;flex-direction:column;gap:2px}
+.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-3);padding:0 10px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--r);border:0;background:transparent;cursor:pointer;text-align:left;color:var(--fg-2);position:relative;width:100%}
+.nav-item:hover{background:var(--surface-2);color:var(--fg)}
+.nav-item[aria-current="page"]{background:var(--surface);color:var(--fg);font-weight:600;box-shadow:var(--shadow)}
+.nav-item[aria-current="page"]::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--accent)}
+.nav-ico{width:24px;height:24px;display:grid;place-items:center;color:var(--accent);flex:none}
+.nav-item .count{margin-left:auto;font-size:11px;background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:0 7px;font-weight:600}
+.side-foot{margin-top:auto;border:1px dashed var(--line);border-radius:var(--r);padding:10px;font-size:12px;color:var(--fg-2);display:flex;gap:8px;align-items:flex-start}
+.side-foot b{color:var(--fg)}
+
+.main{overflow:auto;padding-block:22px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{max-width:1260px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+@media (min-width:861px){.main{padding-left:28px;padding-right:28px}}
+
+.page-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.eyebrow{font-size:12px;color:var(--fg-3);margin-bottom:2px}
+h1,h2,h3{font-family:var(--font-d);font-weight:600;margin:0;text-wrap:balance}
+h1{font-size:26px;line-height:1.2}
+h2{font-size:16px}
+h3{font-size:14px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:var(--r);cursor:pointer;font-size:13px;color:var(--fg);white-space:nowrap}
+.btn:hover{border-color:var(--fg-3)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:600}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--accent)}
+.btn.sm{padding:4px 9px;font-size:12px}
+.btn svg,.icon-btn svg,.nav-ico svg{width:17px;height:17px}
+.btn.sm svg{width:14px;height:14px}
+
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g-main{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;min-width:0}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.card-head .sub{font-size:12px;color:var(--fg-3)}
+
+.kpi{display:flex;flex-direction:column;gap:4px}
+.kpi .label{font-size:12px;color:var(--fg-2);display:flex;align-items:center;gap:6px}
+.kpi .label svg{width:15px;height:15px;color:var(--accent)}
+.kpi .value{font-family:var(--font-d);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi .delta{font-size:12px;color:var(--fg-3)}
+.kpi .delta.up{color:var(--ok)}.kpi .delta.down{color:var(--bad)}
+
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:600;color:var(--fg-3);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:var(--surface-2)}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.muted{color:var(--fg-3)}
+.small{font-size:12px}
+.code{font-family:var(--mono);font-size:12px;color:var(--fg-2);white-space:nowrap}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:2px 9px;border-radius:99px;white-space:nowrap;font-weight:600}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.info{background:var(--info-soft);color:var(--info)}
+.pill.neutral{background:var(--surface-2);color:var(--fg-2)}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:var(--r-sm);border:1px solid var(--line);color:var(--fg-2);margin-right:4px;white-space:nowrap}
+
+.bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;min-width:60px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.bar.done i{background:var(--ok)}
+.prog{display:flex;align-items:center;gap:8px}
+.prog span{font-variant-numeric:tabular-nums;font-size:12px;color:var(--fg-2);min-width:32px;text-align:right}
+
+.list{display:flex;flex-direction:column}
+.li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li .ico{width:30px;height:30px;border-radius:var(--r-sm);background:var(--surface-2);display:grid;place-items:center;color:var(--fg-2);flex:none}
+.li .ico svg{width:16px;height:16px}
+.li .body{flex:1;min-width:0}
+.li .t{font-weight:600}
+.li .m{font-size:12px;color:var(--fg-3)}
+.li .r{margin-left:auto;text-align:right;flex:none}
+
+.ai-tip{display:flex;gap:14px;align-items:center;border:1px solid var(--accent);background:var(--accent-soft);border-radius:var(--r);padding:12px 16px;flex-wrap:wrap}
+.ai-tip .t{flex:1;min-width:220px}
+.ai-tip > svg{color:var(--accent)}
+
+.chart text{fill:var(--fg-3);font-size:11px;font-family:var(--font)}
+.chart .gl{stroke:var(--line);stroke-width:1}
+.chart .b{fill:var(--accent);opacity:.45}
+.chart .b.last{opacity:1}
+.chart .b2{fill:var(--fg-3);opacity:.35}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--fg-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:transparent;padding:9px 12px;cursor:pointer;color:var(--fg-2);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:inline-flex;gap:6px;align-items:center}
+.tabs button svg{width:15px;height:15px}
+.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}
+.tabs button .n{font-size:11px;color:var(--fg-3);font-weight:400}
+
+.split{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
+.secnav{display:flex;flex-direction:column;gap:4px}
+.sec{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 12px;cursor:pointer}
+.sec:hover{border-color:var(--fg-3)}
+.sec[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.sec .row{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.sec b{font-weight:600}
+
+.kanban{display:grid;grid-template-columns:repeat(5,minmax(200px,1fr));gap:12px;overflow-x:auto;padding-bottom:4px}
+.col{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.col-h{display:flex;justify-content:space-between;font-size:12px;color:var(--fg-2);font-weight:600;padding:0 2px}
+.kcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow)}
+.kcard .sum{font-variant-numeric:tabular-nums;font-size:13px}
+
+.integr{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.integ{display:flex;flex-direction:column;gap:10px}
+.integ-h{display:flex;align-items:center;gap:10px}
+.integ-h .ico{width:36px;height:36px;border-radius:var(--r-sm);background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.integ p{margin:0;color:var(--fg-2);font-size:13px}
+.switch{margin-left:auto;width:38px;height:22px;border-radius:99px;background:var(--line);border:0;position:relative;cursor:pointer;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--surface);transition:transform .15s}
+.switch[aria-checked="true"]{background:var(--accent)}
+.switch[aria-checked="true"]::after{transform:translateX(16px)}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);padding:5px 11px;border-radius:99px;cursor:pointer;font-size:13px;color:var(--fg-2)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+
+.ai-search{display:flex;flex-direction:column;gap:12px}
+.ai-search form{display:flex;gap:8px;flex-wrap:wrap}
+.ai-search input{flex:1;min-width:220px;border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r);padding:9px 12px}
+.best td{background:var(--ok-soft)}
+.tree{font-size:13px;display:flex;flex-direction:column;gap:2px}
+.tree div{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:var(--r-sm)}
+.tree div:hover{background:var(--surface-2)}
+.tree svg{width:16px;height:16px;color:var(--fg-3);flex:none}
+.tree .d1{padding-left:26px}.tree .d2{padding-left:46px}
+
+.drawer{position:absolute;top:46px;right:0;bottom:0;width:380px;max-width:100%;background:var(--surface);border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:20;padding-right:env(safe-area-inset-right,0px)}
+.drawer-h{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.drawer-h h2{flex:1}
+.msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:9px 12px;border-radius:var(--r);font-size:13px;line-height:1.5}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-fg)}
+.msg.ai{align-self:flex-start;background:var(--surface-2)}
+.msg ul{margin:6px 0 0;padding-left:18px}
+.composer{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r);padding:8px 10px}
+.overlay{position:absolute;inset:0;background:rgba(10,12,20,.42);display:grid;place-items:center;z-index:30;padding:16px}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);width:min(640px,100%);max-height:100%;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.opt{border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;text-align:left}
+.opt:hover{border-color:var(--accent)}
+.opt svg{color:var(--accent);width:20px;height:20px}
+.opt b{font-size:13px}.opt span{font-size:12px;color:var(--fg-3)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--fg-2)}
+.form .full{grid-column:1/-1}
+.form input,.form select,.form textarea{border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;color:var(--fg)}
+.toast{position:absolute;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:var(--r);font-size:13px;z-index:40;box-shadow:0 6px 20px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
+
+.zones{display:flex;gap:2px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:2px;flex:none}
+.zones button{border:0;background:transparent;padding:5px 12px;border-radius:6px;cursor:pointer;color:var(--fg-2);font-size:13px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.zones button svg{width:15px;height:15px}
+.zones button:hover{color:var(--fg)}
+.zones button[aria-selected="true"]{background:var(--surface);color:var(--fg);font-weight:600;box-shadow:var(--shadow)}
+.zones button[aria-selected="true"] svg{color:var(--accent)}
+.zone-head{display:flex;gap:10px;align-items:center;padding:2px 10px 0}
+.zone-head .zi{width:32px;height:32px;border-radius:var(--r-sm);background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;flex:none}
+.zone-head .zi svg{width:18px;height:18px}
+.zone-head b{display:block;font-family:var(--font-d);font-size:15px}
+.zone-head span{font-size:12px;color:var(--fg-3)}
+.opts-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-3);margin:4px 0 -4px}
+.search{position:relative}
+.sres{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:25;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 10px 30px rgba(0,0,0,.14);max-height:min(60vh,460px);overflow:auto;padding:6px;color:var(--fg)}
+.sres .grp{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-3);padding:8px 8px 4px}
+.sres button{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:0;background:transparent;padding:7px 8px;border-radius:var(--r-sm);cursor:pointer}
+.sres button:hover,.sres button[aria-selected="true"]{background:var(--accent-soft)}
+.sres button svg{width:16px;height:16px;color:var(--accent);flex:none;margin-top:2px}
+.sres .st{font-weight:600;font-size:13px}.sres .ss{font-size:12px;color:var(--fg-3)}
+.sres mark{background:var(--warn-soft);color:inherit;border-radius:2px}
+.sres .none{padding:14px 8px;color:var(--fg-3);font-size:13px}
+.form .checks{display:flex;flex-wrap:wrap;gap:6px}
+.form .checks label{flex-direction:row;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:13px;color:var(--fg);cursor:pointer}
+.form .hint{font-size:12px;color:var(--fg-3);grid-column:1/-1;margin:-4px 0 0}
+.form .err{color:var(--bad);font-size:12px;grid-column:1/-1}
+.msg.ai{white-space:pre-wrap}
+.msg.err{background:var(--bad-soft);color:var(--bad)}
+.ai-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.ai-chips .chip{font-size:12px;padding:4px 10px}
+.savebadge{font-size:11px;padding:2px 8px;border-radius:99px;white-space:nowrap;background:var(--surface-2);color:var(--fg-2)}
+.savebadge.on{background:var(--ok-soft);color:var(--ok)}
+.new-row td{background:var(--info-soft)}
+.btn[disabled]{opacity:.6;cursor:progress}
+
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g-main,.g3{grid-template-columns:minmax(0,1fr)}.split{grid-template-columns:minmax(0,1fr)}.secnav{flex-direction:row;overflow-x:auto}.sec{min-width:200px}}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr}
+  .side{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px max(10px,env(safe-area-inset-left,0px));gap:4px}
+  .nav-group{flex-direction:row;gap:4px}
+  .nav-title,.side-foot,.nav-item .count,.side .zone-head{display:none}
+  .nav-item{white-space:nowrap;width:auto;padding:6px 10px}
+  .win,.search kbd,.brand-name,.sample{display:none}
+  .titlebar{flex-wrap:wrap;padding-right:max(10px,env(safe-area-inset-right,0px))}
+  .search{order:5;flex-basis:100%;max-width:none}
+  .drawer{top:0}
+}
+@media (max-width:560px){.g4,.g2{grid-template-columns:minmax(0,1fr)}.form{grid-template-columns:1fr}h1{font-size:22px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app" id="app">
+  <header class="titlebar">
+    <div class="brand"><span class="brand-mark">ПСД</span><span class="brand-name">Бизнес-панель</span></div>
+    <div class="zones" id="zones" role="tablist" aria-label="Рабочая зона"></div>
+    <div class="search" id="searchBox"><i data-lucide="search"></i><input id="q" placeholder="Поиск: объект, акт, журнал, ИНН…" autocomplete="off" aria-label="Поиск по панели" role="combobox" aria-expanded="false" aria-controls="sres"><kbd>Ctrl K</kbd><div class="sres" id="sres" role="listbox" hidden></div></div>
+    <div class="tools">
+      <span class="sample" title="Все цифры и названия в макете вымышлены">Примерные данные</span>
+      <span class="savebadge" id="saveState" title="Где хранятся созданные записи">Локально</span>
+      <button class="icon-btn" id="themeBtn" aria-label="Тема: как в системе" title="Тема"><i data-lucide="monitor"></i></button>
+      <button class="icon-btn" id="aiBtn" aria-label="AI-помощник" title="AI-помощник"><i data-lucide="sparkles"></i></button>
+      <button class="icon-btn" aria-label="Уведомления" title="Уведомления" data-go="tasks"><i data-lucide="bell"></i><span class="dot"></span></button>
+      <span class="avatar" title="Руководитель">РК</span>
+      <div class="win" aria-hidden="true"><span><i data-lucide="minus"></i></span><span><i data-lucide="square"></i></span><span><i data-lucide="x"></i></span></div>
+    </div>
+  </header>
+  <div class="shell">
+    <nav class="side" id="side" aria-label="Модули"></nav>
+    <main class="main" id="main"><div class="page" id="page"></div></main>
+  </div>
+  <aside class="drawer" id="drawer" hidden aria-label="AI-помощник">
+    <div class="drawer-h"><i data-lucide="sparkles"></i><h2>AI-помощник</h2><button class="icon-btn" id="aiClose" aria-label="Закрыть"><i data-lucide="x"></i></button></div>
+    <div class="msgs" id="msgs">
+      <div class="msg ai">Я вижу все данные панели: объекты, ИТД, журналы, сметы, закупки, счета и банк. Спросите, что горит, чего не хватает или кому что оплатить.</div>
+    </div>
+    <div class="ai-chips" id="aiChips"><button class="chip" data-ask="Что горит на этой неделе?">Что горит на неделе?</button><button class="chip" data-ask="Чего не хватает в ИТД по электромонтажу на «Северном парке»?">Пробелы в ИТД ЭМР</button><button class="chip" data-ask="Кому и сколько нужно оплатить в ближайшее время?">Кому платить</button><button class="chip" data-ask="Напиши вежливое напоминание заказчику о просроченном счёте №112">Письмо по счёту №112</button></div>
+    <form class="composer" id="aiForm"><input id="aiInput" placeholder="Спросите про объекты, документы или закупки"><button class="btn primary" type="submit" aria-label="Отправить"><i data-lucide="send"></i></button></form>
+  </aside>
+  <div class="overlay" id="overlay" hidden><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+  <div class="toast" id="toast" hidden></div>
+</div>
+
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const rub=n=>n.toLocaleString('ru-RU')+' ₽';
+const mln=n=>(n/1e6).toLocaleString('ru-RU',{maximumFractionDigits:2})+' млн ₽';
+const ic=n=>`<i data-lucide="${n}"></i>`;
+const PILL={'Оплачен':'ok','Подписан':'ok','Согласована':'ok','Принят':'ok','Подписан в Диадоке':'ok','Готово':'ok','Подключено':'ok','Доставлено':'ok','Закрыт':'neutral','Ожидает оплаты':'warn','На подписи':'warn','На проверке':'warn','Отправлен в Диадок':'warn','Счёт получен':'warn','Замечания':'bad','Просрочен':'bad','Не хватает':'bad','Экспертиза':'info','В работе':'info','Действует':'info','Ведётся':'info','Поиск поставщика':'info','В пути':'info','Черновик':'neutral','Старт':'neutral','Не начат':'neutral','Не подключено':'neutral','Заявка':'neutral'};
+const pill=s=>`<span class="pill ${PILL[s]||'neutral'}">${s}</span>`;
+const prog=(p,done)=>`<div class="prog"><div class="bar ${done||p===100?'done':''}" style="flex:1"><i style="width:${p}%"></i></div><span>${p}%</span></div>`;
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dec=s=>{const t=document.createElement('textarea');t.innerHTML=String(s??'');return t.value};
+const ruDate=iso=>{if(!iso)return'—';const [y,m,d]=iso.split('-');return d&&m&&y?`${d}.${m}.${y}`:iso};
+let DB=null,SAMPLE=null;
+
+/* Три рабочие зоны: у каждой своё меню и главная; объекты, поиск и AI общие */
+const ZONES={
+ est:{t:'Сметы',ic:'calculator',d:'Сметы, проект, экспертиза',home:'est-home',
+  tabs:['summary','estimate','project','purchases','files'],
+  nav:[['Работа',[['est-home','Главная','layout-dashboard'],['objects','Объекты','building-2',()=>OBJ.filter(o=>o.work.some(w=>w==='Сметы'||w==='ПД')).length],['tasks','Задачи и сроки','calendar-check']]],
+       ['Сметы и проект',[['estimates','Сметы','calculator',()=>EST.filter(e=>e.status!=='Согласована').length],['pd','Проектная док.','drafting-compass',()=>Object.values(PD).flat().filter(r=>r[4]==='Замечания').length||''],['kb','Нормативы и шаблоны','library']]]],
+  chooser:['est','pd','pur','obj','task'],
+  ask:[['Какие сметы ждут ответа заказчика или экспертизы?','Сметы на проверке'],['Сколько открытых замечаний экспертизы и по каким разделам?','Замечания экспертизы'],['Какие материалы из смет котельной нужно передать в закупку?','Материалы в закупку']]},
+ itd:{t:'ИТД',ic:'clipboard-check',d:'Исполнительная документация',home:'itd-home',
+  tabs:['summary','itd','journals','certs','project','files'],
+  nav:[['Работа',[['itd-home','Главная','layout-dashboard'],['objects','Объекты','building-2',()=>Object.keys(ITD).length],['tasks','Задачи и сроки','calendar-check']]],
+       ['Документы',[['id','Акты и комплекты ИТД','clipboard-check',()=>IDACTS.filter(a=>a.status!=='Подписан').length],['journals','Журналы работ','notebook-pen'],['certs','Сертификаты и паспорта','badge-check',()=>Object.values(CERTS).flat().filter(c=>c[3]==='Не хватает').length||''],['kb','Нормативы и шаблоны','library']]]],
+  chooser:['aosr','journal','task','obj'],
+  ask:[['Чего не хватает в ИТД по электромонтажу на «Северном парке»?','Пробелы в ИТД ЭМР'],['Какие паспорта и сертификаты не хватает, чтобы закрыть АОСР?','Нет паспортов'],['Какие акты ИД сейчас на подписи и у кого?','Акты на подписи']]},
+ biz:{t:'Бизнес',ic:'briefcase',d:'Деньги, заказчики, команда',home:'home',
+  tabs:['summary','money','purchases','files'],
+  nav:[['Работа',[['home','Главная','layout-dashboard'],['objects','Объекты','building-2',()=>OBJ.length],['tasks','Задачи и календарь','calendar-check',()=>TASKS[0][1].length]]],
+       ['Деньги',[['contracts','Договоры, счета, акты','file-signature',()=>INVOICES.filter(i=>i.status==='Просрочен').length||''],['finance','Финансы и банк','landmark'],['purchases','Закупки','shopping-cart',()=>PUR.filter(p=>p.status!=='Оплачен'&&p.status!=='Доставлено').length]]],
+       ['Люди',[['clients','Заказчики','handshake'],['team','Исполнители','users']]],
+       ['Система',[['integrations','Интеграции','plug'],['settings','Доступ и настройки','settings']]]],
+  chooser:['inv','act','contract','lead','pur','team','obj','task'],
+  ask:[['Что горит на этой неделе?','Что горит на неделе?'],['Кому и сколько нужно оплатить в ближайшее время?','Кому платить'],['Напиши вежливое напоминание заказчику о просроченном счёте №112','Письмо по счёту №112']]}
+};
+const NAV=Object.values(ZONES).flatMap(z=>z.nav.map(([g,it])=>[z.t+' · '+g,it]));
+const zoneOf=sc=>S.zone&&ZONES[S.zone].nav.some(g=>g[1].some(i=>i[0]===sc))?S.zone:Object.keys(ZONES).find(k=>ZONES[k].nav.some(g=>g[1].some(i=>i[0]===sc)))||S.zone;
+const TABZ={itd:'itd',journals:'itd',certs:'itd',estimate:'est',project:'est',money:'biz',purchases:'biz'};
+
+const OBJ=[
+ {id:'o1',name:'ЖК «Северный парк», корпус 2',city:'Москва',client:'ООО «СтройИнвест»',work:['ИТД','Сметы','Закупки'],stage:'ИТД: монолит 14 эт., кабельные линии 10 кВ',progress:68,due:'15.11.2026',sum:2400000,paid:1500000,status:'В работе'},
+ {id:'o2',name:'Школа на 550 мест',city:'Подольск',client:'ГКУ «УКС Подольск»',work:['ПД','Сметы'],stage:'Стадия П, подготовка к экспертизе',progress:82,due:'30.11.2026',sum:3800000,paid:2280000,status:'Экспертиза'},
+ {id:'o3',name:'Складской комплекс класса А',city:'Домодедово',client:'ООО «Логистик Парк»',work:['ПД'],stage:'Разделы КР и ИОС',progress:41,due:'20.12.2026',sum:2950000,paid:885000,status:'В работе'},
+ {id:'o4',name:'Реконструкция котельной №3',city:'Клин',client:'МУП «Теплосеть»',work:['Сметы'],stage:'Локальные сметы, ресурсный метод',progress:90,due:'28.10.2026',sum:640000,paid:320000,status:'На проверке'},
+ {id:'o5',name:'Благоустройство парка «Дубки»',city:'Химки',client:'МБУ «Парки Химок»',work:['ИТД','Закупки'],stage:'ИТД: наружные сети ВК и освещение',progress:55,due:'05.12.2026',sum:780000,paid:390000,status:'В работе'},
+ {id:'o6',name:'Офисное здание, ул. Советская, 12',city:'Тверь',client:'ООО «Тверь-Девелопмент»',work:['ПД','Сметы'],stage:'Договор подписан, сбор ИРД',progress:8,due:'01.03.2027',sum:1650000,paid:495000,status:'Старт'}
+];
+const objName=id=>(OBJ.find(o=>o.id===id)||{}).name;
+
+/* Состав ИТД по видам работ — по образцам из «000. БАЗА ЗНАНИЙ / 02. Шаблоны и формы» */
+const ITD_LIB={
+ osr:{t:'Общестроительные работы',ic:'brick-wall',docs:[
+  ['АОГРОКС','Акт геодезической разбивочной основы','Прил. 1 к 344/пр'],
+  ['АРООКС','Акт разбивки осей объекта','Прил. 2 к 344/пр'],
+  ['АОСР','Акты освидетельствования скрытых работ','Прил. 3 к 344/пр'],
+  ['АООК','Акты освидетельствования ответственных конструкций','Прил. 4 к 344/пр'],
+  ['Акт осмотра котлованов','Открытые рвы и котлованы под фундаменты',''],
+  ['Испытание свай','Динамической нагрузкой','Форма 35'],
+  ['Акт ВИК','Визуальный и измерительный контроль сварных соединений',''],
+  ['Акт защитного покрытия','Приёмка антикоррозионной защиты',''],
+  ['Акт приёмки кровли','',''],['Акт приёмки фасадов','',''],
+  ['Исполнительные схемы','Геодезические, штамп по ГОСТ Р 21.101','Visio / DWG']]},
+ em:{t:'Электромонтажные работы',ic:'zap',docs:[
+  ['Протокол осмотра кабелей на барабане','Проверка изоляции перед прокладкой',''],
+  ['Протокол прогрева кабелей','На барабане перед прокладкой',''],
+  ['Акт осмотра кабельной канализации','В траншее перед закрытием',''],
+  ['АОСР ЭС','Заземление, прокладка кабеля, монтаж КТП','Прил. 3 к 344/пр'],
+  ['Протоколы ЭТЛ: изоляция','Сопротивление изоляции кабелей и аппаратов',''],
+  ['Протоколы ЭТЛ: заземлитель','Сопротивление заземляющих устройств',''],
+  ['Испытание кабеля выше 1000 В','Протокол испытания повышенным напряжением',''],
+  ['Акт технической готовности ЭМР','С ведомостью электромонтажных недоделок','']]},
+ nvk:{t:'Наружные сети ВК',ic:'waves',docs:[
+  ['АОСР НВК','Траншея, основание, укладка, засыпка','Прил. 3 к 344/пр'],
+  ['Акт участка сети ИТО','','Прил. 5 к 344/пр'],
+  ['Акт гидравлического испытания','Напорные и безнапорные трубопроводы',''],
+  ['Акт промывки и дезинфекции','Сеть водопровода',''],
+  ['Исполнительные схемы сетей','План и профиль','']]},
+ vvk:{t:'Внутренние системы ВК',ic:'droplets',docs:[
+  ['АОСР ВК','Скрытые работы по стоякам и разводке','Прил. 3 к 344/пр'],
+  ['Акт гидростатического испытания','Системы холодного и горячего водоснабжения',''],
+  ['Акт испытания канализации','Пролив систем',''],
+  ['Акт промывки','Системы водоснабжения','']]},
+ nes:{t:'Наружное освещение',ic:'lamp',docs:[
+  ['АОСР ЭС','Фундаменты опор, прокладка кабеля','Прил. 3 к 344/пр'],
+  ['Протоколы ЭТЛ','Изоляция, заземление опор',''],
+  ['Исполнительная схема','Сети наружного освещения','']]}
+};
+const ITD={
+ o1:{osr:[1,1,47,6,2,24,12,3,0,0,38],osr_t:[1,1,62,9,2,24,18,6,1,1,55],
+     em:[4,2,3,14,6,3,0,0],em_t:[4,2,5,22,9,4,3,1]},
+ o5:{nvk:[8,2,1,0,3],nvk_t:[16,4,4,1,8],nes:[5,2,1],nes_t:[9,4,2]}
+};
+const JOURNALS={
+ o1:[['ОЖР','Общий журнал работ','Приказ 1026/пр','Ведётся','22.10'],['ЖВК','Журнал входного учёта и контроля качества','СП 543','Ведётся','21.10'],['ЖБР','Журнал бетонных работ','','Ведётся','22.10'],['ЖСР','Журнал сварочных работ','','Ведётся','18.10'],['ЖМК','Журнал монтажа строительных конструкций','','Ведётся','15.10'],['ЖАКЗ','Журнал антикоррозионной защиты сварных соединений','','Ведётся','12.10'],['ЖЗС','Журнал замоноличивания монтажных стыков и узлов','','Не начат','—'],['ЖПС','Журнал погружения (забивки) свай','','Закрыт','02.06'],['ЖПК','Журнал прокладки кабелей','','Ведётся','20.10'],['ЖМКМ','Журнал монтажа кабельных муфт выше 1000 В','','Ведётся','19.10']],
+ o5:[['ОЖР','Общий журнал работ','Приказ 1026/пр','Ведётся','21.10'],['ЖВК','Журнал входного учёта и контроля качества','СП 543','Ведётся','16.10'],['ЖСР','Журнал сварочных работ (ПЭ трубы)','','Ведётся','14.10'],['ЖПК','Журнал прокладки кабелей','','Не начат','—']]
+};
+const CERTS={
+ o1:[['Арматура А500С Ø12','Документ о качестве №4471','ООО «Мечел-Сервис»','В журнале ЖВК'],['Бетон B30 F150 W8','Паспорт партии №2210-17','ООО «БетонЭкспресс»','В журнале ЖВК'],['Кабель АПвПу2г 1×240/35-10','Паспорт и сертификат','ООО «КабельОпт»','Не хватает'],['Муфты концевые 10 кВ','Сертификат соответствия','ООО «Энергокомплект»','В журнале ЖВК']],
+ o5:[['Труба ПЭ100 SDR17 Ø225','Паспорт качества','ООО «ПолимерТрубы»','В журнале ЖВК'],['Колодцы ж/б КС 15.9','Паспорт изделия','ООО «ЖБИ-5»','Не хватает']]
+};
+const IDACTS=[
+ {n:'АОСР №51',obj:'o1',t:'Бетонирование плиты перекрытия 14 эт., оси 9–16/А–Г',date:'22.10.2026',status:'Черновик'},
+ {n:'АОСР №50',obj:'o1',t:'Армирование плиты перекрытия 14 эт., оси 9–16/А–Г',date:'21.10.2026',status:'Черновик'},
+ {n:'АОСР №14-ЭС',obj:'o1',t:'Прокладка КЛ-10 кВ в траншее, уч. ТП-2 — РП-1',date:'20.10.2026',status:'На подписи'},
+ {n:'АООК №6',obj:'o1',t:'Монолитные стены 13 эт.',date:'17.10.2026',status:'На подписи'},
+ {n:'АОСР №18',obj:'o5',t:'Укладка трубопровода К1 Ø200, уч. КК3–КК7',date:'16.10.2026',status:'Подписан'},
+ {n:'Схема ИС-11',obj:'o5',t:'Исполнительная схема сети В1, уч. ВК2–ВК5',date:'15.10.2026',status:'Подписан'}
+];
+
+const EST=[
+ {n:'ЛС-02-01-01',obj:'o4',name:'Демонтаж котлов ДКВР-10',method:'Ресурсный, ФСНБ-2022',sum:4870000,ver:3,status:'На проверке'},
+ {n:'ЛС-02-01-02',obj:'o4',name:'Монтаж водогрейных котлов',method:'Ресурсный, ФСНБ-2022',sum:21340000,ver:2,status:'На проверке'},
+ {n:'ЛС-07-01-01',obj:'o4',name:'Наружные тепловые сети',method:'Ресурсный, ФСНБ-2022',sum:6125000,ver:1,status:'Черновик'},
+ {n:'ССР',obj:'o2',name:'Сводный сметный расчёт',method:'Ресурсно-индексный',sum:812400000,ver:5,status:'Экспертиза'},
+ {n:'ОС-02-01',obj:'o2',name:'Объектная смета, основное здание',method:'Ресурсно-индексный',sum:604900000,ver:5,status:'Экспертиза'},
+ {n:'ЛС-01-03',obj:'o1',name:'Доп. работы: усиление плиты 14 эт.',method:'Базисно-индексный, ФЕР-2020',sum:1980000,ver:1,status:'Согласована'},
+ {n:'ЛС-05-02',obj:'o1',name:'Кабельные линии 10 кВ',method:'Ресурсный, ФСНБ-2022',sum:7420000,ver:2,status:'На проверке'},
+ {n:'ЛС-02-04',obj:'o5',name:'Наружные сети К1 и В1',method:'Ресурсный, ФСНБ-2022',sum:9310000,ver:1,status:'Согласована'},
+ {n:'ЛС-01-04',obj:'o6',name:'Изыскания и обследование',method:'СБЦ на изыскания',sum:430000,ver:1,status:'Черновик'}
+];
+
+const PD={
+ o2:[['1','ПЗ','Пояснительная записка','Своими силами','Готово',0],['2','СПОЗУ','Схема планировочной организации участка','Ольга М.','Готово',1],['3','АР','Архитектурные решения','Своими силами','Готово',2],['4','КР','Конструктивные решения','Бюро «КонструктивПро»','Замечания',5],['5.1','ЭС','Система электроснабжения','Дмитрий С.','Готово',0],['5.4','ОВиК','Отопление, вентиляция, кондиционирование','Алексей П.','Замечания',3],['7','ПОС','Проект организации строительства','Своими силами','Готово',0],['9','ПБ','Пожарная безопасность','Ольга М.','В работе',0],['12','СМ','Смета на строительство','Ирина К.','Экспертиза',2]],
+ o3:[['1','ПЗ','Пояснительная записка','Своими силами','В работе',0],['3','АР','Архитектурные решения','Своими силами','Готово',0],['4','КР','Конструктивные решения','Бюро «КонструктивПро»','В работе',0],['5.2','ВС','Система водоснабжения','Дмитрий С.','В работе',0],['5.4','ОВиК','Отопление, вентиляция, кондиционирование','Алексей П.','Не начат',0],['12','СМ','Смета на строительство','Ирина К.','Не начат',0]],
+ o6:[['ИРД','ГПЗУ','Градостроительный план участка','Своими силами','В работе',0],['ИРД','ТУ','Технические условия на сети','Своими силами','Не начат',0],['ИИ','ИГДИ','Инженерно-геодезические изыскания','Субподряд','Не начат',0]]
+};
+
+const PUR=[
+ {n:'З-034',obj:'o1',item:'Кабель АПвПу2г 1×240/35-10 кВ',qty:'1 200 м',sum:1584000,sup:'ООО «КабельОпт»',status:'Счёт получен',cert:'Ждём паспорт'},
+ {n:'З-033',obj:'o1',item:'Муфты концевые 10 кВ, 3 комплекта',qty:'3 компл.',sum:96300,sup:'ООО «Энергокомплект»',status:'Доставлено',cert:'В ЖВК'},
+ {n:'З-032',obj:'o1',item:'Арматура А500С Ø12',qty:'18,4 т',sum:1214000,sup:'ООО «Мечел-Сервис»',status:'Доставлено',cert:'В ЖВК'},
+ {n:'З-031',obj:'o5',item:'Колодцы ж/б КС 15.9 с плитами',qty:'14 шт.',sum:352800,sup:'ООО «ЖБИ-5»',status:'В пути',cert:'Ждём паспорт'},
+ {n:'З-030',obj:'o5',item:'Светильники LED 100 Вт на опоры',qty:'36 шт.',sum:0,sup:'—',status:'Поиск поставщика',cert:'—'},
+ {n:'З-029',obj:'o5',item:'Труба ПЭ100 SDR17 Ø225',qty:'420 м',sum:731000,sup:'ООО «ПолимерТрубы»',status:'Оплачен',cert:'В ЖВК'}
+];
+const OFFERS=[
+ ['ООО «КабельОпт»','1 320 ₽/м','В наличии, Москва','2 дня','Паспорт, сертификат ТР ТС',true],
+ ['ООО «ЭлектроСнаб-М»','1 355 ₽/м','Под заказ','7 дней','Паспорт',false],
+ ['ООО «ТД Кабельный завод»','1 290 ₽/м','От 2 000 м','14 дней','Паспорт, протокол заводских испытаний',false],
+ ['ООО «Энергия-Регион»','1 410 ₽/м','В наличии, Подольск','1 день','Паспорт',false]
+];
+
+const CONTRACTS=[
+ {n:'Д-2026/014',client:'ООО «СтройИнвест»',obj:'o1',sum:2400000,stages:'3 из 5',status:'Действует'},
+ {n:'Д-2026/011',client:'ГКУ «УКС Подольск»',obj:'o2',sum:3800000,stages:'4 из 6',status:'Действует'},
+ {n:'Д-2026/017',client:'ООО «Логистик Парк»',obj:'o3',sum:2950000,stages:'1 из 4',status:'Действует'},
+ {n:'Д-2026/019',client:'МУП «Теплосеть»',obj:'o4',sum:640000,stages:'1 из 2',status:'Действует'},
+ {n:'Д-2026/015',client:'МБУ «Парки Химок»',obj:'o5',sum:780000,stages:'2 из 4',status:'Действует'},
+ {n:'Д-2026/021',client:'ООО «Тверь-Девелопмент»',obj:'o6',sum:1650000,stages:'0 из 4',status:'Подписан в Диадоке'},
+ {n:'Д-2025/038',client:'ООО «Альфа-Монтаж»',obj:null,sum:520000,stages:'3 из 3',status:'Закрыт'}
+];
+const INVOICES=[
+ {n:'Счёт №118',obj:'o2',date:'20.10.2026',client:'ГКУ «УКС Подольск»',sum:760000,due:'03.11.2026',status:'Ожидает оплаты'},
+ {n:'Счёт №117',obj:'o6',date:'17.10.2026',client:'ООО «Тверь-Девелопмент»',sum:495000,due:'24.10.2026',status:'Оплачен'},
+ {n:'Счёт №115',obj:'o4',date:'10.10.2026',client:'МУП «Теплосеть»',sum:320000,due:'31.10.2026',status:'Ожидает оплаты'},
+ {n:'Счёт №112',obj:'o3',date:'01.10.2026',client:'ООО «Логистик Парк»',sum:210000,due:'14.10.2026',status:'Просрочен'},
+ {n:'Счёт №110',obj:'o1',date:'26.09.2026',client:'ООО «СтройИнвест»',sum:480000,due:'10.10.2026',status:'Оплачен'}
+];
+const ACTS=[
+ {n:'Акт №64',kind:'Акт сдачи-приёмки работ',stage:'Этап 3: ИТД, 11–13 эт.',client:'ООО «СтройИнвест»',sum:480000,status:'Подписан в Диадоке'},
+ {n:'Акт №63',kind:'Акт сдачи-приёмки работ',stage:'Этап 4: ПД, разделы 5–7',client:'ГКУ «УКС Подольск»',sum:760000,status:'Отправлен в Диадок'},
+ {n:'КС-2 / КС-3 №7',kind:'Акт о приёмке и справка о стоимости',stage:'Сметы, 1 очередь',client:'МУП «Теплосеть»',sum:320000,status:'На подписи'},
+ {n:'Акт №60',kind:'Акт сдачи-приёмки работ',stage:'Этап 1: обследование',client:'ООО «Логистик Парк»',sum:885000,status:'Подписан в Диадоке'}
+];
+const OPS=[
+ ['22.10','Т-Банк','ООО «Тверь-Девелопмент»','Оплата по счёту №117',495000,'Счёт №117'],
+ ['21.10','Т-Банк','Ирина К. (самозанятая)','Оплата по заданию: сметы котельной',-85000,'Исполнитель'],
+ ['18.10','СберБизнес','ООО «СтройИнвест»','Аванс по этапу 4',300000,'Д-2026/014'],
+ ['16.10','СберБизнес','ООО «ПолимерТрубы»','Оплата по закупке З-029',-731000,'Закупка'],
+ ['15.10','Т-Банк','ФНС','УСН, аванс за 9 мес.',-112000,'Налоги'],
+ ['14.10','СберБизнес','Бюро «КонструктивПро»','Раздел КР, школа',-240000,'Исполнитель'],
+ ['10.10','СберБизнес','ООО «СтройИнвест»','Оплата по счёту №110',480000,'Счёт №110']
+];
+const PIPE=[
+ ['Заявка',[['АО «ТрансДорСтрой»','Сметы на ремонт моста',900000],['ООО «Агро-Юг»','ИТД на зернохранилище',450000]]],
+ ['КП отправлено',[['ГБУ «Жилищник»','Сметы капремонта, 12 домов',1300000]]],
+ ['Переговоры',[['ООО «Северсталь-Строй»','ПД цеха, стадия П',4200000]]],
+ ['Договор',[['ООО «Тверь-Девелопмент»','ПД и сметы офиса',1650000]]],
+ ['В работе',[['ООО «СтройИнвест»','ИТД ЖК, корпус 2',2400000],['ГКУ «УКС Подольск»','ПД школы',3800000],['ООО «Логистик Парк»','ПД склада',2950000]]]
+];
+const TEAM=[
+ ['Ирина К.','Сметчик','Самозанятая',['o4','o2'],85000,'4,9'],
+ ['Бюро «КонструктивПро»','Конструктор КР','ООО, договор подряда',['o2','o3'],360000,'4,6'],
+ ['Алексей П.','ОВиК','ИП',['o2','o3'],120000,'4,7'],
+ ['Дмитрий С.','ЭС, ВС, ВО','Самозанятый',['o2','o3'],0,'4,8'],
+ ['Ольга М.','ПБ, СПОЗУ','ИП',['o2'],95000,'5,0'],
+ ['ЭТЛ «Энергоконтроль»','Электролаборатория','ООО',['o1','o5'],64000,'4,8']
+];
+const TASKS=[
+ ['Сегодня',[['Ответить на замечания экспертизы по КР','Школа на 550 мест','bad','23.10'],['Проверить АОСР №50–51 перед отправкой','ЖК «Северный парк»','warn','23.10'],['Напомнить об оплате счёта №112','ООО «Логистик Парк»','bad','23.10']]],
+ ['На неделе',[['Сдать локальные сметы котельной','Котельная №3','warn','28.10'],['Вызвать ЭТЛ: испытание КЛ-10 кВ','ЖК «Северный парк»','info','29.10'],['Подписать акт №63 в Диадоке','Школа на 550 мест','info','30.10']]],
+ ['Позже',[['Запросить ТУ на сети','Офис, Тверь','neutral','06.11'],['Квартальная сверка с Контур.Бухгалтерией','Финансы','neutral','10.11']]]
+];
+const KB=[
+ ['Норматив','Приказ Минстроя №344/пр','Состав и порядок ведения исполнительной документации'],
+ ['Норматив','Приказ Минстроя №1026/пр','Общий и специальные журналы работ'],
+ ['Норматив','СП 543.1325800.2024','Входной контроль, журнал входного учёта'],
+ ['Норматив','Приказ Минстроя №421/пр','Методика определения сметной стоимости'],
+ ['Норматив','Постановление №87','Состав разделов проектной документации'],
+ ['Норматив','ПУЭ и ПТЭЭП','Испытания электрооборудования, протоколы ЭТЛ'],
+ ['Шаблон','АОСР, АООК, АРООКС, АОГРОКС','Word и Excel, приложения 1–4 к 344/пр'],
+ ['Шаблон','Протоколы ЭТЛ','Изоляция, заземлитель, кабель выше 1000 В'],
+ ['Шаблон','Журналы','ОЖР, ЖВК, бетонные, сварочные, прокладка кабелей и др.'],
+ ['Шаблон','Исполнительная схема, штамп','Visio / DWG'],
+ ['Шаблон','Данные объекта для генерации ИД','Google Таблица: участники, подписанты, материалы'],
+ ['Шаблон','Договор на ИТД / ПД и акт сдачи-приёмки','Word, отправка через Диадок']
+];
+const INTEG=[
+ ['landmark','Т-Банк','Выписка и платёжки по API: поступления сами привязываются к счетам.',true,'Банк'],
+ ['landmark','СберБизнес','Второй расчётный счёт, тот же сценарий: выписка, платежи исполнителям.',true,'Банк'],
+ ['book-open','Контур.Бухгалтерия','Выгрузка счетов, актов и оплат, сверка остатков, расчёт УСН.',true,'Бухгалтерия'],
+ ['file-check','Диадок','Отправка договоров, актов и счетов заказчику, статус подписи в карточке.',true,'ЭДО'],
+ ['hard-drive','Google Диск','Папки объектов, шаблоны и база знаний ИД. Основное хранилище.',true,'Облако'],
+ ['hard-drive','Яндекс Диск','Резервная копия папок объектов и обмен файлами с исполнителями.',false,'Облако'],
+ ['calculator','Гранд-Смета','Импорт смет (XML / АРПС): суммы и ресурсы попадают в объект и закупки.',false,'Сметы'],
+ ['mail','Почта и календарь','Письма заказчикам из карточки, сроки задач в календаре.',true,'Связь']
+];
+
+const INN={'ООО «СтройИнвест»':'7701234567','ГКУ «УКС Подольск»':'5036001122','ООО «Логистик Парк»':'5009045678','МУП «Теплосеть»':'5020011223','МБУ «Парки Химок»':'5047098765','ООО «Тверь-Девелопмент»':'6950123456','ООО «Альфа-Монтаж»':'7722334455','АО «ТрансДорСтрой»':'7710987654','ООО «Агро-Юг»':'6164012345','ГБУ «Жилищник»':'7735566778','ООО «Северсталь-Строй»':'3528011223'};
+const JENTRIES=[
+ {obj:'o1',j:'ОЖР',date:'22.10.2026',t:'Бетонирование плиты перекрытия 14 эт., оси 9–16/А–Г',who:'Прораб Иванов А.'},
+ {obj:'o1',j:'ЖБР',date:'22.10.2026',t:'Укладка бетона B30 F150 W8, 46 м³, температура воздуха +4 °C',who:'Мастер Петров С.'},
+ {obj:'o1',j:'ЖПК',date:'20.10.2026',t:'Прокладка КЛ-10 кВ в траншее, уч. ТП-2 — РП-1, 380 м',who:'Мастер Кузнецов В.'},
+ {obj:'o5',j:'ОЖР',date:'21.10.2026',t:'Укладка трубопровода К1 Ø200, уч. КК7–КК9',who:'Прораб Сидоров Д.'}
+];
+const JLIB={};Object.values(JOURNALS).flat().forEach(j=>JLIB[j[0]]=j[1]);
+
+const S={zone:'biz',screen:'home',obj:'o1',otab:'itd',sec:'osr',idObj:'o1',pdObj:'o2',ctab:'contracts',theme:'system',pobj:'all',aiq:'Кабель АПвПу2г 1×240/35-10 кВ, 1 200 м, доставка Москва'};
+
+function kpi(icon,label,value,delta,cls=''){return `<div class="card kpi"><div class="label">${ic(icon)}${label}</div><div class="value">${value}</div><div class="delta ${cls}">${delta}</div></div>`}
+function itdAll(){return Object.keys(ITD).reduce((s,id)=>{const [a,b]=itdTotals(id);return[s[0]+a,s[1]+b]},[0,0])}
+function itdTotals(id){const d=ITD[id];if(!d)return[0,0];let a=0,b=0;Object.keys(ITD_LIB).forEach(k=>{if(d[k]){a+=d[k].reduce((x,y)=>x+y,0);b+=d[k+'_t'].reduce((x,y)=>x+y,0)}});return[a,b]}
+function bars(series,W=560,H=200){
+  const m=['Май','Июн','Июл','Авг','Сен','Окт'],L=44,B=24,max=2.5,y=x=>H-B-(x/max)*(H-B-10),step=(W-L)/6;
+  let g='';for(let t=0;t<=2.5;t+=0.5){g+=`<line class="gl" x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}"/><text x="${L-6}" y="${y(t)+4}" text-anchor="end">${t.toLocaleString('ru-RU')}</text>`}
+  m.forEach((mm,i)=>{const cx=L+step*i+step/2;
+    if(series.length===1){const v=series[0][i];g+=`<rect class="b ${i===5?'last':''}" x="${cx-23}" y="${y(v)}" width="46" height="${y(0)-y(v)}" rx="3"/>`;if(i===5)g+=`<text x="${cx}" y="${y(v)-6}" text-anchor="middle" style="fill:var(--fg);font-weight:600">${v.toLocaleString('ru-RU')}</text>`}
+    else{g+=`<rect class="b last" x="${cx-24}" y="${y(series[0][i])}" width="22" height="${y(0)-y(series[0][i])}" rx="2"/><rect class="b2" x="${cx+2}" y="${y(series[1][i])}" width="22" height="${y(0)-y(series[1][i])}" rx="2"/>`}
+    g+=`<text x="${cx}" y="${H-6}" text-anchor="middle">${mm}</text>`});
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Деньги по месяцам, млн рублей">${g}</svg>`;
+}
+const INC=[1.2,0.9,1.6,1.1,2.1,1.84],OUT=[0.7,0.8,0.9,0.6,1.1,1.17];
+
+function purTable(rows,showObj){return `<div class="tbl-wrap"><table><thead><tr><th>Заявка</th>${showObj?'<th>Объект</th>':''}<th>Материал</th><th>Кол-во</th><th>Поставщик</th><th class="num">Сумма</th><th>Документы о качестве</th><th>Статус</th></tr></thead><tbody>
+ ${rows.map(p=>`<tr><td class="code">${p.n}</td>${showObj?`<td class="small">${objName(p.obj)}</td>`:''}<td><b>${p.item}</b></td><td class="num">${p.qty}</td><td class="small">${p.sup}</td><td class="num">${p.sum?rub(p.sum):'—'}</td><td>${p.cert==='В ЖВК'?pill('Готово'):p.cert==='—'?'<span class="muted">—</span>':pill('Не хватает')}</td><td>${pill(p.status)}</td></tr>`).join('')}</tbody></table></div>`}
+
+let OFF={q:'Кабель АПвПу2г 1×240/35-10 кВ, 1 200 м, доставка Москва',rows:OFFERS,src:'example',busy:false,err:''};
+function aiSearch(){
+ const rows=OFF.rows;
+ const note=OFF.src==='ai'?`Ориентировочная оценка AI по запросу «${esc(OFF.q)}». У AI нет доступа к прайсам в реальном времени: цены, наличие и сроки уточните у поставщиков.`:OFF.src==='example'?'Пример выдачи по кабелю 10 кВ. Введите свой запрос, и AI подберёт варианты.':'';
+ return `<div class="card ai-search"><div class="card-head" style="margin:0"><div><h2>${ic('sparkles')} AI-поиск поставщиков</h2><div class="sub">AI подбирает варианты закупки: тип поставщика, ориентир цены, срок и документы о качестве</div></div></div>
+ <form id="aiPur"><input id="aiPurQ" value="${esc(S.aiq)}" aria-label="Что нужно купить"><button class="btn primary" type="submit" ${OFF.busy?'disabled':''}>${ic(OFF.busy?'loader':'search')}${OFF.busy?'Ищу…':'Найти'}</button></form>
+ <div class="chips"><button class="chip" data-q="Колодцы ж/б КС 15.9, 14 шт., Химки">Колодцы КС 15.9</button><button class="chip" data-q="Светильник LED 100 Вт консольный, 36 шт.">Светильники LED 100 Вт</button><button class="chip" data-q="Бетон B30 F150 W8, 60 м³, Москва">Бетон B30</button></div>
+ ${OFF.err?`<div class="msg err" style="max-width:none">${esc(OFF.err)}</div>`:''}
+ <div class="tbl-wrap"><table><thead><tr><th>Поставщик</th><th class="num">Цена</th><th>Наличие</th><th>Срок</th><th>Документы</th><th></th></tr></thead><tbody>
+ ${rows.map(o=>`<tr class="${o[5]?'best':''}"><td><b>${esc(o[0])}</b>${o[5]?'<div class="small" style="color:var(--ok)">Лучшее сочетание цены и срока</div>':''}${o[6]?`<div class="small muted">${esc(o[6])}</div>`:''}</td><td class="num">${esc(o[1])}</td><td class="small">${esc(o[2])}</td><td class="num">${esc(o[3])}</td><td class="small">${esc(o[4])}</td><td><button class="btn sm" data-act="toast" data-msg="Запрос КП подготовлен: ${esc(o[0])}">${ic('send')}Запросить КП</button></td></tr>`).join('')}
+ </tbody></table></div>
+ <div class="small muted">${note} Перед заказом проверьте контрагента по ИНН и создайте заявку с привязкой к смете объекта.</div></div>`}
+async function runSupplierSearch(q){
+ q=(q||'').trim();if(!q)return;S.aiq=q;
+ if(!SAMPLE){OFF.err='AI недоступен в этом просмотре. Откройте панель на claude.ai, чтобы искать поставщиков.';return render()}
+ OFF.busy=true;OFF.err='';render();
+ try{
+  const res=await SAMPLE.json(`Ты помогаешь снабженцу проектно-строительной компании в России. Запрос на закупку: «${q}».
+Подбери 4 варианта, где это можно купить. У тебя нет доступа к интернету, поэтому не выдумывай названия конкретных фирм, ИНН и телефоны: описывай тип поставщика (например «Завод-производитель, прямая отгрузка», «Федеральный дистрибьютор», «Региональный склад», «Маркетплейс стройматериалов»). Цены давай реалистичным диапазоном в рублях за единицу на 2026 год, сроки в днях.
+Верни только JSON-массив из 4 объектов с полями: sup (тип поставщика), price (строка, например «1 250–1 400 ₽/м»), avail (наличие и минимальная партия), term (срок поставки, например «2–5 дней»), docs (какие документы о качестве нужно запросить для журнала входного контроля и АОСР), note (одна короткая подсказка), best (true ровно у одного варианта с лучшим сочетанием цены и срока).`,{modelTier:'default',cache:false});
+  const arr=Array.isArray(res)?res:(res&&Array.isArray(res.items)?res.items:[]);
+  if(!arr.length)throw{code:'empty_completion'};
+  OFF.rows=arr.slice(0,6).map(x=>[String(x.sup||'—'),String(x.price||'—'),String(x.avail||'—'),String(x.term||'—'),String(x.docs||'—'),!!x.best,String(x.note||'')]);
+  OFF.q=q;OFF.src='ai';
+ }catch(e){OFF.err=aiErr(e)}
+ OFF.busy=false;render();
+}
+
+const R={
+home(){
+  const feed=[['file-check','Акт №64 подписан заказчиком в Диадоке','ООО «СтройИнвест» · 22.10, 16:40'],['banknote','Поступило 495 000 ₽ по счёту №117','Т-Банк · 22.10, 11:05'],['package-check','Доставлены муфты 10 кВ, паспорт внесён в ЖВК','Закупка З-033 · 21.10'],['message-square-warning','3 замечания экспертизы по разделу ОВиК','Школа на 550 мест · 21.10']];
+  return `
+  <div class="page-head"><div><div class="eyebrow">Пятница, 23 октября 2026</div><h1>Добрый день</h1></div>
+   <div class="actions"><button class="btn" data-act="ai">${ic('sparkles')}Спросить AI</button><button class="btn primary" data-act="new">${ic('plus')}Создать</button></div></div>
+  <div class="grid g4">
+   ${kpi('banknote','Поступления за октябрь','1 840 000 ₽','Т-Банк и СберБизнес, +12%','up')}
+   ${kpi('alarm-clock','Ждём оплаты','1 290 000 ₽','из них просрочено 210 000 ₽','down')}
+   ${kpi('file-signature','Договоров в работе',CONTRACTS.filter(c=>c.status==='Действует').length,mln(CONTRACTS.filter(c=>c.status==='Действует').reduce((a,c)=>a+(+c.sum||0),0))+' в сумме')}
+   ${kpi('pen-line','На подписи в Диадоке','9','АОСР, акты, КС-2')}
+  </div>
+  <div class="ai-tip">${ic('sparkles')}<div class="t"><b>Счёт №112 просрочен на 9 дней: 210 000 ₽ от ООО «Логистик Парк».</b><div class="small muted">Срок оплаты был 14.10. Акт №60 по этапу 1 заказчик подписал, оснований для задержки нет.</div></div><button class="btn primary" data-ask="Напиши вежливое напоминание заказчику о просроченном счёте №112">Написать напоминание</button></div>
+  <div class="grid g2">
+   <button class="card" data-zone="est" style="text-align:left;cursor:pointer;display:flex;gap:12px;align-items:center"><div class="zone-head" style="padding:0"><div class="zi">${ic('calculator')}</div><div><b>Сметы</b><span>${EST.filter(e=>e.status!=='Согласована').length} смет в работе · ${Object.values(PD).flat().reduce((a,r)=>a+r[5],0)} замечаний экспертизы</span></div></div><span style="margin-left:auto">${ic('chevron-right')}</span></button>
+   <button class="card" data-zone="itd" style="text-align:left;cursor:pointer;display:flex;gap:12px;align-items:center"><div class="zone-head" style="padding:0"><div class="zi">${ic('clipboard-check')}</div><div><b>ИТД</b><span>Готово ${itdAll()[0]} из ${itdAll()[1]} документов · ${IDACTS.filter(a=>a.status==='На подписи').length} акта на подписи</span></div></div><span style="margin-left:auto">${ic('chevron-right')}</span></button>
+  </div>
+  <div class="grid g-main">
+   <div class="card"><div class="card-head"><div><h2>Поступления</h2><div class="sub">млн ₽ по месяцам, из выписок Т-Банка и СберБизнеса</div></div><button class="btn ghost" data-go="finance">Финансы ${ic('chevron-right')}</button></div>${bars([INC])}</div>
+   <div class="card"><div class="card-head"><h2>Сроки на неделе</h2><button class="btn ghost" data-go="tasks">Все ${ic('chevron-right')}</button></div><div class="list">
+    ${TASKS[0][1].concat(TASKS[1][1]).slice(0,5).map(t=>`<div class="li"><div class="ico">${ic(t[2]==='bad'?'triangle-alert':'clock')}</div><div class="body"><div class="t">${t[0]}</div><div class="m">${t[1]}</div></div><div class="r"><span class="pill ${t[2]}">${t[3]}</span></div></div>`).join('')}
+   </div></div>
+  </div>
+  <div class="grid g-main">
+   <div class="card"><div class="card-head"><h2>Объекты</h2><button class="btn ghost" data-go="objects">Все объекты ${ic('chevron-right')}</button></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Объект</th><th>Работы</th><th>Готовность</th><th>Срок</th></tr></thead><tbody>
+    ${OBJ.slice(0,5).map(o=>`<tr class="click" data-obj="${o.id}"><td><b>${o.name}</b><div class="small muted">${o.stage}</div></td><td>${o.work.map(w=>`<span class="tag">${w}</span>`).join('')}</td><td style="min-width:130px">${prog(o.progress)}</td><td class="num">${o.due}</td></tr>`).join('')}
+    </tbody></table></div></div>
+   <div class="card"><div class="card-head"><h2>Лента событий</h2></div><div class="list">
+    ${feed.map(f=>`<div class="li"><div class="ico">${ic(f[0])}</div><div class="body"><div class="t">${f[1]}</div><div class="m">${f[2]}</div></div></div>`).join('')}
+   </div></div>
+  </div>`;
+},
+'est-home'(){
+  const act=EST.filter(e=>e.status!=='Согласована'),rem=Object.entries(PD).flatMap(([id,rs])=>rs.filter(r=>r[5]).map(r=>[id,...r]));
+  const tasks=TASKS.flatMap(([g,ts])=>ts.map(t=>[...t,g])).filter(t=>/смет|экспертиз|раздел|котельн/i.test(t[0])||/(^|\s)ТУ(\s|$)/.test(t[0]));
+  return `<div class="page-head"><div><div class="eyebrow">Сметы · Пятница, 23 октября 2026</div><h1>Сметы и проект</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Импорт из Гранд-Сметы: XML или АРПС">${ic('upload')}Импорт из Гранд-Сметы</button><button class="btn primary" data-act="new" data-kind="est">${ic('plus')}Смета</button></div></div>
+  <div class="grid g4">
+   ${kpi('calculator','Сметная стоимость в работе',mln(act.reduce((a,e)=>a+(+e.sum||0),0)),act.length+' смет не согласовано')}
+   ${kpi('hourglass','На проверке у заказчика',EST.filter(e=>e.status==='На проверке').length,'ответ в среднем за 4 дня')}
+   ${kpi('message-square-warning','Замечания экспертизы',rem.reduce((a,r)=>a+r[6],0),'ответить до 30.10','down')}
+   ${kpi('percent','Индексы Минстроя','III кв. 2026','обновлены 15.10.2026')}
+  </div>
+  <div class="ai-tip">${ic('sparkles')}<div class="t"><b>Сметы котельной №3 сдаются 28.10.</b><div class="small muted">ЛС-02-01-01 и ЛС-02-01-02 на проверке у МУП «Теплосеть», ЛС-07-01-01 по тепловым сетям ещё черновик.</div></div><button class="btn primary" data-ask="Что нужно сделать, чтобы сдать сметы котельной №3 к 28.10?">План до сдачи</button></div>
+  <div class="grid g-main">
+   <div class="card"><div class="card-head"><h2>Сметы в работе</h2><button class="btn ghost" data-go="estimates">Все сметы ${ic('chevron-right')}</button></div><div class="tbl-wrap"><table><thead><tr><th>Шифр</th><th>Наименование</th><th class="num">Сумма</th><th>Статус</th></tr></thead><tbody>
+    ${act.map(e=>`<tr class="click" data-obj="${e.obj}" data-tab="estimate"><td class="code">${e.n}</td><td><b>${e.name}</b><div class="small muted">${objName(e.obj)||''}</div></td><td class="num">${rub(+e.sum||0)}</td><td>${pill(e.status)}</td></tr>`).join('')}</tbody></table></div></div>
+   <div class="card"><div class="card-head"><h2>Сроки</h2><button class="btn ghost" data-go="tasks">Все ${ic('chevron-right')}</button></div><div class="list">
+    ${tasks.length?tasks.map(t=>`<div class="li"><div class="ico">${ic(t[2]==='bad'?'triangle-alert':'clock')}</div><div class="body"><div class="t">${t[0]}</div><div class="m">${t[1]}</div></div><div class="r"><span class="pill ${t[2]}">${t[3]}</span></div></div>`).join(''):'<p class="muted" style="margin:0">Сроков нет.</p>'}</div></div>
+  </div>
+  <div class="card"><div class="card-head"><div><h2>Замечания экспертизы</h2><div class="sub">разделы ПД с открытыми замечаниями</div></div><button class="btn ghost" data-go="pd">Проектная док. ${ic('chevron-right')}</button></div><div class="tbl-wrap"><table><thead><tr><th>Объект</th><th>Раздел</th><th>Исполнитель</th><th class="num">Замечаний</th><th>Статус</th></tr></thead><tbody>
+   ${rem.map(r=>`<tr class="click" data-pdobj="${r[0]}" data-go="pd"><td class="small">${objName(r[0])}</td><td><span class="code">${r[2]}</span> ${r[3]}</td><td class="small">${r[4]}</td><td class="num">${r[6]}</td><td>${pill(r[5])}</td></tr>`).join('')}</tbody></table></div></div>`;
+},
+'itd-home'(){
+  const [a,b]=itdAll(),sign=IDACTS.filter(x=>x.status==='На подписи'),miss=Object.entries(CERTS).flatMap(([id,cs])=>cs.filter(c=>c[3]==='Не хватает').map(c=>[id,...c]));
+  const jl=Object.values(JOURNALS).flat().filter(j=>j[3]==='Ведётся').length;
+  return `<div class="page-head"><div><div class="eyebrow">ИТД · Пятница, 23 октября 2026</div><h1>Исполнительная документация</h1></div><div class="actions"><button class="btn" data-act="new" data-kind="journal">${ic('notebook-pen')}Запись в журнал</button><button class="btn primary" data-act="new-aosr">${ic('plus')}Акт по шаблону</button></div></div>
+  <div class="grid g4">
+   ${kpi('clipboard-check','ИТД готова',`${a} из ${b}`,Object.keys(ITD).length+' объекта, '+pct(a,b)+'%')}
+   ${kpi('pen-line','Акты на подписи',sign.length,'технадзор и заказчик')}
+   ${kpi('notebook-pen','Журналов ведётся',jl,'последняя запись '+((JENTRIES[0]||{}).date||'—'))}
+   ${kpi('badge-check','Нет паспортов',miss.length,'без них не закрыть АОСР',miss.length?'down':'')}
+  </div>
+  <div class="ai-tip">${ic('sparkles')}<div class="t"><b>По ЖК «Северный парк» готовы данные для АОСР №50–51.</b><div class="small muted">Записи в ОЖР и ЖБР внесены вчера, паспорта на арматуру и бетон есть. Акты можно собрать по шаблону 344/пр.</div></div><button class="btn primary" data-act="new-aosr">Сформировать акты</button></div>
+  <div class="grid g-main">
+   <div class="card"><div class="card-head"><h2>Готовность по объектам</h2><button class="btn ghost" data-go="id">Подробно ${ic('chevron-right')}</button></div><div class="list">
+    ${Object.keys(ITD).map(id=>{const [x,y]=itdTotals(id);return `<div class="li click" data-obj="${id}" data-tab="itd" style="cursor:pointer"><div class="ico">${ic('building-2')}</div><div class="body"><div class="t">${objName(id)}</div><div class="m">${Object.keys(ITD_LIB).filter(k=>ITD[id][k]).map(k=>ITD_LIB[k].t).join(', ')}</div></div><div class="r" style="width:160px">${prog(pct(x,y))}<div class="small muted">${x} из ${y}</div></div></div>`}).join('')}</div></div>
+   <div class="card"><div class="card-head"><h2>Не хватает документов о качестве</h2><button class="btn ghost" data-go="certs">Все ${ic('chevron-right')}</button></div><div class="list">
+    ${miss.length?miss.map(c=>`<div class="li"><div class="ico">${ic('badge-alert')}</div><div class="body"><div class="t">${c[1]}</div><div class="m">${c[2]} · ${c[3]} · ${objName(c[0])}</div></div></div>`).join(''):'<p class="muted" style="margin:0">Все паспорта на месте.</p>'}</div></div>
+  </div>
+  <div class="card"><div class="card-head"><h2>Последние акты</h2><button class="btn ghost" data-go="id">Все акты ${ic('chevron-right')}</button></div><div class="tbl-wrap"><table><thead><tr><th>Документ</th><th>Объект</th><th>Работы</th><th>Дата</th><th>Статус</th></tr></thead><tbody>
+   ${IDACTS.slice(0,6).map(x=>`<tr class="click" data-obj="${x.obj}" data-tab="itd"><td class="code">${x.n}</td><td class="small">${objName(x.obj)||''}</td><td>${x.t}</td><td class="num">${x.date}</td><td>${pill(x.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+},
+journals(){
+  return `<div class="page-head"><div><div class="eyebrow">Общий и специальные журналы по Приказу 1026/пр, все объекты</div><h1>Журналы работ</h1></div><div class="actions"><button class="btn primary" data-act="new" data-kind="journal">${ic('plus')}Запись в журнал</button></div></div>
+  <div class="grid g2">${Object.entries(JOURNALS).map(([id,js])=>`<div class="card"><div class="card-head"><div><h2>${objName(id)}</h2><div class="sub">${js.filter(j=>j[3]==='Ведётся').length} из ${js.length} ведутся</div></div><button class="btn sm" data-obj="${id}" data-tab="journals">Открыть ${ic('chevron-right')}</button></div><div class="tbl-wrap"><table><tbody>${js.map(j=>`<tr><td class="code">${j[0]}</td><td>${j[1]}</td><td class="num">${j[4]}</td><td>${pill(j[3])}</td></tr>`).join('')}</tbody></table></div></div>`).join('')}</div>
+  <div class="card"><div class="card-head"><h2>Последние записи</h2><span class="sub">${JENTRIES.length}</span></div><div class="tbl-wrap"><table><thead><tr><th>Дата</th><th>Объект</th><th>Журнал</th><th>Работы</th><th>Кто внёс</th></tr></thead><tbody>${JENTRIES.map(x=>`<tr class="click" data-obj="${x.obj}" data-tab="journals"><td class="num">${x.date}</td><td class="small">${objName(x.obj)||''}</td><td class="code">${x.j}</td><td>${x.t}</td><td class="small">${x.who||'—'}</td></tr>`).join('')}</tbody></table></div></div>`;
+},
+certs(){
+  const all=Object.entries(CERTS).flatMap(([id,cs])=>cs.map(c=>[id,...c]));
+  return `<div class="page-head"><div><div class="eyebrow">Документы о качестве: идут в журнал входного контроля и в приложения к АОСР</div><h1>Сертификаты и паспорта</h1></div><div class="actions"><button class="btn primary" data-act="toast" data-msg="Паспорт распознаётся AI: материал, партия, дата">${ic('upload')}Загрузить</button></div></div>
+  <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Материал</th><th>Объект</th><th>Документ</th><th>Поставщик</th><th>Статус</th></tr></thead><tbody>
+  ${all.map(c=>`<tr class="click" data-obj="${c[0]}" data-tab="certs"><td><b>${c[1]}</b></td><td class="small">${objName(c[0])}</td><td class="small">${c[2]}</td><td class="small">${c[3]}</td><td>${c[4]==='Не хватает'?pill('Не хватает'):pill('Готово')}</td></tr>`).join('')}</tbody></table></div></div>`;
+},
+objects(){
+  const z=S.zone,rows=OBJ.filter(o=>z==='est'?o.work.some(w=>w==='Сметы'||w==='ПД'):z==='itd'?(o.work.includes('ИТД')||ITD[o.id]):true);
+  return `<div class="page-head"><div><div class="eyebrow">${rows.length} из ${OBJ.length} объектов${z==='biz'?'':' с работами по зоне «'+ZONES[z].t+'»'} · ${mln(rows.reduce((a,o)=>a+(+o.sum||0),0))} по договорам</div><h1>Объекты</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Фильтры: заказчик, вид работ, срок">${ic('filter')}Фильтры</button><button class="btn primary" data-act="new">${ic('plus')}Новый объект</button></div></div>
+  <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Объект</th><th>Заказчик</th><th>Работы</th><th>Этап</th><th>Готовность</th><th class="num">Договор</th><th class="num">Оплачено</th><th>Срок</th><th>Статус</th></tr></thead><tbody>
+  ${rows.map(o=>`<tr class="click" data-obj="${o.id}"><td><b>${o.name}</b><div class="small muted">${o.city}</div></td><td>${o.client}</td><td>${o.work.map(w=>`<span class="tag">${w}</span>`).join('')}</td><td class="small">${o.stage}</td><td style="min-width:130px">${prog(o.progress)}</td><td class="num">${rub(o.sum)}</td><td class="num">${rub(o.paid)}</td><td class="num">${o.due}</td><td>${pill(o.status)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+},
+object(){
+  const o=OBJ.find(x=>x.id===S.obj),hasITD=!!ITD[o.id],[d,t]=itdTotals(o.id);
+  const tabs=[['summary','Сводка','layout-grid'],['itd','ИТД','clipboard-check',hasITD?`${d}/${t}`:''],['journals','Журналы','notebook-pen',(JOURNALS[o.id]||[]).length||''],['certs','Сертификаты и паспорта','badge-check',(CERTS[o.id]||[]).length||''],['estimate','Смета','calculator',EST.filter(e=>e.obj===o.id).length||''],['project','Проект','drafting-compass',(PD[o.id]||[]).length||''],['purchases','Закупки','shopping-cart',PUR.filter(p=>p.obj===o.id).length||''],['money','Финансы','banknote'],['files','Файлы','folder']].filter(x=>ZONES[S.zone].tabs.includes(x[0]));
+  if(!tabs.some(x=>x[0]===S.otab))S.otab='summary';
+  return `<div><button class="btn ghost" data-go="objects" style="padding-left:0">${ic('arrow-left')}Все объекты</button></div>
+  <div class="page-head"><div><div class="eyebrow">${o.client} · ${o.city} · договор ${(CONTRACTS.find(c=>c.obj===o.id)||{}).n||'—'}</div><h1>${o.name}</h1></div><div class="actions">${pill(o.status)}<button class="btn" data-act="toast" data-msg="Откроется папка объекта на Google Диске">${ic('folder-open')}Папка на Google Диске</button><button class="btn primary" data-act="new">${ic('plus')}Документ</button></div></div>
+  <div class="tabs" role="tablist">${tabs.map(x=>`<button role="tab" data-otab="${x[0]}" aria-selected="${x[0]===S.otab}">${ic(x[2])}${x[1]}${x[3]?` <span class="n">${x[3]}</span>`:''}</button>`).join('')}</div>
+  ${OT[S.otab](o)}`;
+},
+tasks(){
+  const days=['Пн 19','Вт 20','Ср 21','Чт 22','Пт 23','Сб 24','Вс 25'];
+  return `<div class="page-head"><div><div class="eyebrow">${TASKS.reduce((a,g)=>a+g[1].length,0)} задач · ${TASKS[0][1].length} на сегодня</div><h1>Задачи и календарь</h1></div><div class="actions"><button class="btn primary" data-act="new">${ic('plus')}Задача</button></div></div>
+  <div class="card"><div class="card-head"><h2>Неделя 43</h2><span class="sub">19–25 октября</span></div>
+   <div class="tbl-wrap"><div style="display:grid;grid-template-columns:repeat(7,minmax(90px,1fr));gap:6px;min-width:640px">
+   ${days.map((d,i)=>`<div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:8px;min-height:92px;${i===4?'border-color:var(--accent);background:var(--accent-soft)':''}"><div class="small" style="font-weight:600">${d}</div>${i===1?'<div class="small muted">Совещание с ГКУ, 11:00</div>':''}${i===3?'<div class="small muted">Выезд: Северный парк</div>':''}${i===4?'<div class="small"><b>3 срока</b></div><div class="small muted">Экспертиза, АОСР, счёт</div>':''}</div>`).join('')}
+   </div></div></div>
+  <div class="grid g3">${TASKS.map(([g,list])=>`<div class="card"><div class="card-head"><h2>${g}</h2><span class="sub">${list.length}</span></div><div class="list">${list.map(t=>`<div class="li"><div class="ico">${ic(t[2]==='bad'?'triangle-alert':'circle')}</div><div class="body"><div class="t">${t[0]}</div><div class="m">${t[1]}</div></div><div class="r"><span class="pill ${t[2]}">${t[3]}</span></div></div>`).join('')}</div></div>`).join('')}</div>`;
+},
+id(){
+  return `<div class="page-head"><div><div class="eyebrow">Сводка по всем объектам. Подробно — в карточке объекта, вкладка «ИТД»</div><h1>Исполнительная документация</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Реестр ИД выгружается в Excel и PDF">${ic('list')}Реестр ИД</button><button class="btn primary" data-act="new-aosr">${ic('plus')}Акт по шаблону</button></div></div>
+  <div class="grid g2">${Object.keys(ITD).map(id=>{const [a,b]=itdTotals(id);return `<div class="card"><div class="card-head"><div><h2>${objName(id)}</h2><div class="sub">Готово ${a} из ${b} документов</div></div><button class="btn sm" data-obj="${id}" data-tab="itd">Открыть ИТД ${ic('chevron-right')}</button></div>${prog(pct(a,b))}
+   <div class="list" style="margin-top:8px">${Object.keys(ITD_LIB).filter(k=>ITD[id][k]).map(k=>{const x=ITD[id][k].reduce((p,c)=>p+c,0),y=ITD[id][k+'_t'].reduce((p,c)=>p+c,0);return `<div class="li"><div class="ico">${ic(ITD_LIB[k].ic)}</div><div class="body"><div class="t">${ITD_LIB[k].t}</div><div class="m">${x} из ${y}</div></div><div class="r" style="width:140px">${prog(pct(x,y))}</div></div>`}).join('')}</div></div>`}).join('')}</div>
+  <div class="card"><div class="card-head"><h2>Последние документы</h2><span class="sub">статусы подписания</span></div><div class="tbl-wrap"><table><thead><tr><th>Документ</th><th>Объект</th><th>Работы</th><th>Дата</th><th>Статус</th></tr></thead><tbody>
+  ${IDACTS.map(a=>`<tr class="click" data-obj="${a.obj}" data-tab="itd"><td class="code">${a.n}</td><td class="small">${objName(a.obj)}</td><td>${a.t}</td><td class="num">${a.date}</td><td>${pill(a.status)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+},
+estimates(){
+  return `<div class="page-head"><div><div class="eyebrow">${EST.length} смет · 4 на проверке у заказчика</div><h1>Сметы</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Импорт из Гранд-Сметы: файл XML или АРПС">${ic('upload')}Импорт из Гранд-Сметы</button><button class="btn primary" data-act="new">${ic('plus')}Новая смета</button></div></div>
+  <div class="grid g3">
+   ${kpi('calculator','Сметная стоимость в работе',mln(EST.reduce((a,e)=>a+e.sum,0)),'по всем объектам')}
+   ${kpi('repeat','Версий на согласовании','5','среднее время ответа 4 дня')}
+   ${kpi('percent','Индексы Минстроя','III кв. 2026','обновлены 15.10.2026')}
+  </div>
+  <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Шифр</th><th>Наименование</th><th>Объект</th><th>Метод и база</th><th class="num">Сумма, с НДС</th><th>Версия</th><th>Статус</th></tr></thead><tbody>
+  ${EST.map(e=>`<tr class="click" data-obj="${e.obj}" data-tab="estimate"><td class="code">${e.n}</td><td><b>${e.name}</b></td><td class="small">${objName(e.obj)}</td><td class="small">${e.method}</td><td class="num">${rub(e.sum)}</td><td class="num">v${e.ver}</td><td>${pill(e.status)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+},
+pd(){
+  const rows=PD[S.pdObj];const rem=rows.reduce((a,r)=>a+r[5],0);
+  return `<div class="page-head"><div><div class="eyebrow">Состав разделов по Постановлению Правительства №87</div><h1>Проектная документация</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Ответы на замечания собираются в одну таблицу для экспертизы">${ic('messages-square')}Ответы экспертизе</button><button class="btn primary" data-act="new">${ic('plus')}Раздел</button></div></div>
+  <div class="chips">${Object.keys(PD).map(k=>`<button class="chip" data-pdobj="${k}" aria-pressed="${k===S.pdObj}">${objName(k)}</button>`).join('')}</div>
+  <div class="grid g3">
+   ${kpi('layers','Разделов в комплекте',rows.length,rows.filter(r=>r[4]==='Готово').length+' готово')}
+   ${kpi('message-square-warning','Открытые замечания',rem,rem?'нужно ответить до 30.10':'замечаний нет',rem?'down':'')}
+   ${kpi('users','Исполнителей на разделах',new Set(rows.map(r=>r[3])).size,'включая свои силы')}
+  </div>
+  <div class="card">${pdTable(rows)}</div>`;
+},
+kb(){
+  return `<div class="page-head"><div><div class="eyebrow">Google Диск: «000. БАЗА ЗНАНИЙ (НТД, шаблоны, примеры)»</div><h1>Шаблоны и нормативы</h1></div><div class="actions"><button class="btn primary" data-act="toast" data-msg="Загрузка шаблона Word, Excel или Visio">${ic('upload')}Загрузить шаблон</button></div></div>
+  <div class="grid g2">${['Норматив','Шаблон'].map(k=>`<div class="card"><div class="card-head"><h2>${k==='Норматив'?'Нормативы':'Шаблоны'}</h2></div><div class="list">${KB.filter(x=>x[0]===k).map(x=>`<div class="li"><div class="ico">${ic(k==='Норматив'?'book-marked':'file-text')}</div><div class="body"><div class="t">${x[1]}</div><div class="m">${x[2]}</div></div></div>`).join('')}</div></div>`).join('')}</div>
+  <div class="card"><div class="card-head"><h2>Комплекты ИТД по видам работ</h2><span class="sub">из этих наборов собирается вкладка «ИТД» в объекте</span></div><div class="grid g3">${Object.values(ITD_LIB).map(l=>`<div><div class="t" style="display:flex;gap:8px;align-items:center;font-weight:600">${ic(l.ic)}${l.t}</div><div class="small muted" style="margin-top:4px">${l.docs.length} видов документов</div></div>`).join('')}</div></div>`;
+},
+purchases(){
+  const rows=S.pobj==='all'?PUR:PUR.filter(p=>p.obj===S.pobj);
+  return `<div class="page-head"><div><div class="eyebrow">Заявки на материалы по объектам. Паспорта после доставки уходят в «Сертификаты» и журнал входного контроля</div><h1>Закупки</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Ведомость материалов собирается из сметы Гранд-Сметы">${ic('file-spreadsheet')}Из сметы</button><button class="btn primary" data-act="new">${ic('plus')}Заявка</button></div></div>
+  <div class="grid g4">
+   ${kpi('shopping-cart','Заявок в работе','4','1 ищем поставщика')}
+   ${kpi('wallet','К оплате поставщикам','1 584 000 ₽','счёт по кабелю 10 кВ')}
+   ${kpi('truck','В пути','1','колодцы КС 15.9, Химки')}
+   ${kpi('badge-check','Нет паспортов','2','без них не закрыть АОСР','down')}
+  </div>
+  ${aiSearch()}
+  <div class="card"><div class="card-head"><h2>Заявки</h2><div class="chips"><button class="chip" data-pobj="all" aria-pressed="${S.pobj==='all'}">Все</button>${['o1','o5'].map(k=>`<button class="chip" data-pobj="${k}" aria-pressed="${S.pobj===k}">${objName(k)}</button>`).join('')}</div></div>${purTable(rows,true)}</div>`;
+},
+contracts(){
+  const t=S.ctab;let body='';
+  if(t==='contracts')body=`<table><thead><tr><th>Номер</th><th>Заказчик</th><th>Объект</th><th class="num">Сумма</th><th>Этапы</th><th>Статус</th></tr></thead><tbody>${CONTRACTS.map(c=>`<tr class="${c.obj?'click':''}" ${c.obj?`data-obj="${c.obj}" data-tab="money"`:''}><td class="code">${c.n}</td><td>${c.client}</td><td class="small">${c.obj?objName(c.obj):'—'}</td><td class="num">${rub(c.sum)}</td><td class="num">${c.stages}</td><td>${pill(c.status)}</td></tr>`).join('')}</tbody></table>`;
+  if(t==='invoices')body=invTable(INVOICES);
+  if(t==='acts')body=`<table><thead><tr><th>Документ</th><th>Вид</th><th>Этап</th><th>Заказчик</th><th class="num">Сумма</th><th>Статус</th></tr></thead><tbody>${ACTS.map(c=>`<tr><td class="code">${c.n}</td><td class="small">${c.kind}</td><td>${c.stage}</td><td class="small">${c.client}</td><td class="num">${rub(c.sum)}</td><td>${pill(c.status)}</td></tr>`).join('')}</tbody></table>`;
+  return `<div class="page-head"><div><div class="eyebrow">Документы с заказчиками: от договора до закрывающих. Подписание через Диадок</div><h1>Договоры, счета, акты</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Счёт создаётся из этапа договора и уходит в Диадок и Контур.Бухгалтерию">${ic('receipt')}Счёт из этапа</button><button class="btn primary" data-act="new">${ic('plus')}Договор</button></div></div>
+  <div class="grid g3">
+   ${kpi('file-signature','Действующих договоров','4',mln(9790000)+' в сумме')}
+   ${kpi('alarm-clock','Ждём оплаты','1 290 000 ₽','3 счёта, 1 просрочен','down')}
+   ${kpi('pen-line','Акты без подписи','2','отправлены в Диадок')}
+  </div>
+  <div class="card"><div class="tabs" role="tablist">${[['contracts','Договоры'],['invoices','Счета'],['acts','Акты, КС-2, КС-3']].map(([k,l])=>`<button role="tab" data-ctab="${k}" aria-selected="${k===t}">${l}</button>`).join('')}</div><div class="tbl-wrap" style="margin-top:8px">${body}</div></div>`;
+},
+finance(){
+  return `<div class="page-head"><div><div class="eyebrow">Т-Банк и СберБизнес · Контур.Бухгалтерия · обновлено сегодня в 09:12</div><h1>Финансы и банк</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Выгрузка в Контур.Бухгалтерию: 7 операций">${ic('refresh-cw')}Синхронизировать</button><button class="btn primary" data-act="toast" data-msg="Платёжка уйдёт в банк на подпись">${ic('send')}Платёж</button></div></div>
+  <div class="grid g4">
+   ${kpi('wallet','Т-Банк','784 200 ₽','расчётный счёт ···4021')}
+   ${kpi('wallet','СберБизнес','452 200 ₽','расчётный счёт ···7730')}
+   ${kpi('trending-down','Расходы, октябрь','1 168 000 ₽','закупки 63%, исполнители 28%')}
+   ${kpi('receipt-text','Налог УСН 6%','110 400 ₽','по данным Контур.Бухгалтерии')}
+  </div>
+  <div class="grid g-main">
+   <div class="card"><div class="card-head"><div><h2>Доходы и расходы</h2><div class="sub">млн ₽, оба банка</div></div><div class="legend"><span><i style="background:var(--accent)"></i>Доходы</span><span><i style="background:var(--fg-3);opacity:.5"></i>Расходы</span></div></div>${bars([INC,OUT])}</div>
+   <div class="card"><div class="card-head"><h2>К оплате</h2></div><div class="list">${TEAM.filter(t=>t[4]).map(t=>`<div class="li"><div class="ico">${ic('user')}</div><div class="body"><div class="t">${t[0]}</div><div class="m">${t[1]} · ${t[2]}</div></div><div class="r num">${rub(t[4])}</div></div>`).join('')}<div class="li"><div class="ico">${ic('shopping-cart')}</div><div class="body"><div class="t">ООО «КабельОпт»</div><div class="m">Закупка З-034</div></div><div class="r num">${rub(1584000)}</div></div></div></div>
+  </div>
+  <div class="card"><div class="card-head"><h2>Банковская выписка</h2><span class="sub">операции сами привязаны к счетам, закупкам и договорам</span></div>${opsTable(OPS)}</div>`;
+},
+clients(){
+  return `<div class="page-head"><div><div class="eyebrow">Воронка заказов · ${mln(PIPE.flatMap(p=>p[1]).reduce((a,c)=>a+c[2],0))}</div><h1>Заказчики</h1></div><div class="actions"><button class="btn" data-act="toast" data-msg="Реквизиты подтянутся по ИНН">${ic('search')}Найти по ИНН</button><button class="btn primary" data-act="new">${ic('plus')}Заявка</button></div></div>
+  <div class="kanban">${PIPE.map(([st,cs])=>`<div class="col"><div class="col-h"><span>${st}</span><span>${cs.length}</span></div>${cs.map(c=>`<div class="kcard"><b>${c[0]}</b><span class="small muted">${c[1]}</span><span class="sum">${rub(c[2])}</span></div>`).join('')}</div>`).join('')}</div>`;
+},
+team(){
+  return `<div class="page-head"><div><div class="eyebrow">Аутсорсеры видят только свои объекты и задания</div><h1>Исполнители</h1></div><div class="actions"><button class="btn primary" data-act="new">${ic('user-plus')}Пригласить</button></div></div>
+  <div class="card">${teamTable(TEAM)}</div>`;
+},
+integrations(){
+  return `<div class="page-head"><div><div class="eyebrow">Сервисы, с которыми вы уже работаете</div><h1>Интеграции</h1></div></div>
+  <div class="integr">${INTEG.map((x,i)=>`<div class="card integ"><div class="integ-h"><div class="ico">${ic(x[0])}</div><div><h3>${x[1]}</h3><div class="small muted">${x[4]}</div></div><button class="switch" role="switch" aria-label="${x[1]}" aria-checked="${x[3]}" data-sw="${i}"></button></div><p>${x[2]}</p><div>${pill(x[3]?'Подключено':'Не подключено')}</div></div>`).join('')}</div>`;
+},
+settings(){
+  const roles=[['Руководитель','Всё: объекты, деньги, документы, настройки','Полный'],['Исполнитель (аутсорсер)','Свои объекты, задания и файлы. Без финансов компании','Ограниченный'],['Бухгалтер','Счета, акты, банк, отчёты. Без проектных файлов','Финансы'],['Заказчик (портал)','Просмотр статуса и подписание актов','Только чтение']];
+  return `<div class="page-head"><div><div class="eyebrow">Кто что видит в панели</div><h1>Доступ и настройки</h1></div><div class="actions"><button class="btn primary" data-act="new">${ic('user-plus')}Пригласить пользователя</button></div></div>
+  <div class="card"><div class="card-head"><h2>Роли</h2></div><div class="tbl-wrap"><table><thead><tr><th>Роль</th><th>Что доступно</th><th>Уровень</th></tr></thead><tbody>${roles.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td><span class="tag">${r[2]}</span></td></tr>`).join('')}</tbody></table></div></div>
+  <div class="grid g2"><div class="card"><div class="card-head"><h2>Реквизиты компании</h2></div><div class="list"><div class="li"><div class="body"><div class="m">Подставляются в договоры, счета и акты</div><div class="t">ООО «Проектное бюро» · ИНН 0000000000</div></div></div></div></div>
+  <div class="card"><div class="card-head"><h2>Резервные копии</h2></div><div class="list"><div class="li"><div class="body"><div class="m">Google Диск → Яндекс Диск, ежедневно в 03:00</div><div class="t">Последняя копия: сегодня, 03:02</div></div></div></div></div></div>`;
+}
+};
+
+function pdTable(rows){return `<div class="tbl-wrap"><table><thead><tr><th>№</th><th>Шифр</th><th>Раздел</th><th>Исполнитель</th><th class="num">Замечания</th><th>Статус</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="code">${r[0]}</td><td class="code">${r[1]}</td><td><b>${r[2]}</b></td><td class="small">${r[3]}</td><td class="num">${r[5]||'—'}</td><td>${pill(r[4])}</td></tr>`).join('')}</tbody></table></div>`}
+function invTable(rows){return `<table><thead><tr><th>Счёт</th><th>Дата</th><th>Заказчик</th><th class="num">Сумма</th><th>Оплатить до</th><th>Статус</th></tr></thead><tbody>${rows.map(c=>`<tr><td class="code">${c.n}</td><td class="num">${c.date}</td><td>${c.client}</td><td class="num">${rub(c.sum)}</td><td class="num">${c.due}</td><td>${pill(c.status)}</td></tr>`).join('')}</tbody></table>`}
+function opsTable(rows){return `<div class="tbl-wrap"><table><thead><tr><th>Дата</th><th>Банк</th><th>Контрагент</th><th>Назначение</th><th>Привязка</th><th class="num">Сумма</th></tr></thead><tbody>${rows.map(o=>`<tr><td class="num">${o[0]}</td><td class="small">${o[1]}</td><td>${o[2]}</td><td class="small">${o[3]}</td><td><span class="tag">${o[5]}</span></td><td class="num" style="color:${o[4]>0?'var(--ok)':'var(--fg)'}">${o[4]>0?'+':'−'}${rub(Math.abs(o[4]))}</td></tr>`).join('')}</tbody></table></div>`}
+function teamTable(rows){return `<div class="tbl-wrap"><table><thead><tr><th>Исполнитель</th><th>Специализация</th><th>Форма</th><th>Объекты</th><th class="num">Рейтинг</th><th class="num">К оплате</th><th>Доступ</th></tr></thead><tbody>${rows.map(t=>`<tr><td><b>${t[0]}</b></td><td>${t[1]}</td><td class="small">${t[2]}</td><td class="small">${t[3].map(objName).join(', ')}</td><td class="num">${t[5]}</td><td class="num">${t[4]?rub(t[4]):'—'}</td><td><span class="tag">Только свои объекты</span></td></tr>`).join('')}</tbody></table></div>`}
+const empty=(txt,btn,act='new')=>`<div class="card" style="text-align:center;padding:36px 16px"><p class="muted" style="margin:0 0 12px">${txt}</p><button class="btn" data-act="${act}">${ic('plus')}${btn}</button></div>`;
+
+/* Вкладки карточки объекта */
+const OT={
+summary(o){
+  const [d,t]=itdTotals(o.id);
+  return `<div class="grid g4">
+   ${kpi('file-signature','Сумма договора',rub(o.sum),o.work.join(', '))}
+   ${kpi('banknote','Оплачено',rub(o.paid),pct(o.paid,o.sum)+'% от договора','up')}
+   ${kpi('gauge','Готовность',o.progress+'%',o.stage)}
+   ${kpi('calendar','Срок сдачи',o.due,'по календарному плану')}
+  </div>
+  <div class="grid g-main">
+   <div class="card"><div class="card-head"><h2>Что по разделам</h2></div><div class="list">
+    ${ITD[o.id]?`<div class="li"><div class="ico">${ic('clipboard-check')}</div><div class="body"><div class="t">ИТД</div><div class="m">${d} из ${t} документов</div></div><div class="r" style="width:150px">${prog(pct(d,t))}</div></div>`:''}
+    ${JOURNALS[o.id]?`<div class="li"><div class="ico">${ic('notebook-pen')}</div><div class="body"><div class="t">Журналы</div><div class="m">${JOURNALS[o.id].filter(j=>j[3]==='Ведётся').length} ведутся</div></div></div>`:''}
+    ${EST.some(e=>e.obj===o.id)?`<div class="li"><div class="ico">${ic('calculator')}</div><div class="body"><div class="t">Смета</div><div class="m">${EST.filter(e=>e.obj===o.id).length} шт., ${mln(EST.filter(e=>e.obj===o.id).reduce((a,e)=>a+e.sum,0))}</div></div></div>`:''}
+    ${PD[o.id]?`<div class="li"><div class="ico">${ic('drafting-compass')}</div><div class="body"><div class="t">Проект</div><div class="m">${PD[o.id].filter(r=>r[4]==='Готово').length} из ${PD[o.id].length} разделов готово</div></div></div>`:''}
+    ${PUR.some(p=>p.obj===o.id)?`<div class="li"><div class="ico">${ic('shopping-cart')}</div><div class="body"><div class="t">Закупки</div><div class="m">${PUR.filter(p=>p.obj===o.id).length} заявки</div></div></div>`:''}
+   </div></div>
+   <div class="card"><div class="card-head"><h2>Участники</h2></div><div class="list">
+    <div class="li"><div class="body"><div class="m">Заказчик</div><div class="t">${o.client}</div></div></div>
+    <div class="li"><div class="body"><div class="m">Технический надзор</div><div class="t">Инженер СК, приказ №12-ТН</div></div></div>
+    <div class="li"><div class="body"><div class="m">Исполнители</div><div class="t">${TEAM.filter(t=>t[3].includes(o.id)).map(t=>t[0]).join(', ')||'Своими силами'}</div></div></div>
+   </div></div>
+  </div>`;
+},
+itd(o){
+  if(!ITD[o.id])return empty('ИТД не входит в договор по этому объекту.','Добавить комплект ИТД');
+  const keys=Object.keys(ITD_LIB).filter(k=>ITD[o.id][k]);if(!keys.includes(S.sec))S.sec=keys[0];
+  const lib=ITD_LIB[S.sec],done=ITD[o.id][S.sec],tot=ITD[o.id][S.sec+'_t'];
+  return `<div class="split">
+   <div class="secnav">${keys.map(k=>{const a=ITD[o.id][k].reduce((x,y)=>x+y,0),b=ITD[o.id][k+'_t'].reduce((x,y)=>x+y,0);return `<button class="sec" data-sec="${k}" aria-pressed="${k===S.sec}"><div class="row"><b>${ITD_LIB[k].t}</b><span class="muted">${a}/${b}</span></div>${prog(pct(a,b))}</button>`}).join('')}
+    <button class="btn" data-act="toast" data-msg="Добавить вид работ: внутренние ВК, ОВиК, слаботочка и др.">${ic('plus')}Вид работ</button></div>
+   <div class="card"><div class="card-head"><div><h2>${lib.t}</h2><div class="sub">Состав по образцам из базы знаний на Google Диске</div></div><div class="actions"><button class="btn sm" data-act="toast" data-msg="Реестр ИД по разделу: Excel и PDF">${ic('list')}Реестр</button><button class="btn sm primary" data-act="new-aosr">${ic('wand-sparkles')}Сформировать</button></div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Документ</th><th>Основание</th><th>Готово</th><th style="width:150px"></th><th></th></tr></thead><tbody>
+    ${lib.docs.map((dd,i)=>{const a=done[i],b=tot[i],st=a>=b?'Готово':a===0?'Не начат':'В работе';return `<tr><td><b>${dd[0]}</b><div class="small muted">${dd[1]}</div></td><td class="small">${dd[2]||'—'}</td><td class="num">${a} / ${b}</td><td>${prog(pct(a,b))}</td><td>${pill(st)}</td></tr>`}).join('')}
+    </tbody></table></div></div>
+  </div>
+  <div class="card"><div class="card-head"><h2>Последние документы</h2></div><div class="tbl-wrap"><table><thead><tr><th>Документ</th><th>Работы</th><th>Дата</th><th>Статус</th><th></th></tr></thead><tbody>
+   ${IDACTS.filter(a=>a.obj===o.id).map(a=>`<tr><td class="code">${a.n}</td><td>${a.t}</td><td class="num">${a.date}</td><td>${pill(a.status)}</td><td><button class="btn ghost sm" data-act="toast" data-msg="${a.n}: Word и PDF" aria-label="Скачать">${ic('download')}</button></td></tr>`).join('')}
+  </tbody></table></div></div>`;
+},
+journals(o){
+  const j=JOURNALS[o.id];if(!j)return empty('Журналы по объекту не ведутся.','Завести журнал');
+  const en=JENTRIES.filter(x=>x.obj===o.id);
+  return `<div class="card"><div class="card-head"><div><h2>Журналы работ</h2><div class="sub">Общий и специальные журналы по Приказу 1026/пр</div></div><button class="btn sm primary" data-act="new" data-kind="journal">${ic('plus')}Запись в журнал</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Код</th><th>Журнал</th><th>Основание</th><th>Последняя запись</th><th>Статус</th></tr></thead><tbody>
+  ${j.map(x=>`<tr><td class="code">${x[0]}</td><td><b>${x[1]}</b></td><td class="small">${x[2]||'—'}</td><td class="num">${x[4]}</td><td>${pill(x[3])}</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="card"><div class="card-head"><h2>Последние записи</h2><span class="sub">${en.length}</span></div>${en.length?`<div class="tbl-wrap"><table><thead><tr><th>Дата</th><th>Журнал</th><th>Работы</th><th>Кто внёс</th></tr></thead><tbody>${en.map(x=>`<tr><td class="num">${x.date}</td><td class="code">${x.j}</td><td>${x.t}</td><td class="small">${x.who||'—'}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted" style="margin:0">Записей пока нет.</p>'}</div>`;
+},
+certs(o){
+  const c=CERTS[o.id];if(!c)return empty('Документов о качестве пока нет.','Загрузить паспорт');
+  return `<div class="card"><div class="card-head"><div><h2>Сертификаты и паспорта</h2><div class="sub">Попадают в журнал входного контроля и в приложения к АОСР</div></div><button class="btn sm primary" data-act="toast" data-msg="Паспорт распознаётся AI: материал, партия, дата">${ic('upload')}Загрузить</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Материал</th><th>Документ</th><th>Поставщик</th><th>Статус</th></tr></thead><tbody>
+  ${c.map(x=>`<tr><td><b>${x[0]}</b></td><td class="small">${x[1]}</td><td class="small">${x[2]}</td><td>${x[3]==='Не хватает'?pill('Не хватает'):pill('Готово')}</td></tr>`).join('')}</tbody></table></div></div>`;
+},
+estimate(o){
+  const e=EST.filter(x=>x.obj===o.id);if(!e.length)return empty('Смет по объекту нет.','Импорт из Гранд-Сметы','toast');
+  return `<div class="card"><div class="card-head"><div><h2>Сметы объекта</h2><div class="sub">Импорт из Гранд-Сметы, ведомость материалов передаётся в закупки</div></div><button class="btn sm" data-act="toast" data-msg="Импорт из Гранд-Сметы: XML или АРПС">${ic('upload')}Импорт</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Шифр</th><th>Наименование</th><th>Метод и база</th><th class="num">Сумма, с НДС</th><th>Версия</th><th>Статус</th></tr></thead><tbody>
+  ${e.map(x=>`<tr><td class="code">${x.n}</td><td><b>${x.name}</b></td><td class="small">${x.method}</td><td class="num">${rub(x.sum)}</td><td class="num">v${x.ver}</td><td>${pill(x.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+},
+project(o){
+  if(!PD[o.id])return `<div class="card"><div class="card-head"><div><h2>Рабочая документация</h2><div class="sub">Проект, по которому ведутся работы и ИТД</div></div><button class="btn sm" data-act="toast" data-msg="Загрузка комплекта РД в папку объекта">${ic('upload')}Загрузить РД</button></div>
+   <div class="list">${['КЖ — Конструкции железобетонные, изм. 3','ЭС — Наружные сети электроснабжения 10 кВ, изм. 1','НВК — Наружные сети водопровода и канализации'].map(x=>`<div class="li"><div class="ico">${ic('file-text')}</div><div class="body"><div class="t">${x}</div><div class="m">PDF и DWG, Google Диск</div></div></div>`).join('')}</div></div>`;
+  return `<div class="card">${pdTable(PD[o.id])}</div>`;
+},
+purchases(o){
+  const p=PUR.filter(x=>x.obj===o.id);
+  return `${aiSearch()}${p.length?`<div class="card"><div class="card-head"><h2>Заявки по объекту</h2></div>${purTable(p,false)}</div>`:empty('Заявок на материалы нет.','Создать заявку')}`;
+},
+money(o){
+  const inv=INVOICES.filter(x=>x.obj===o.id);
+  return `<div class="grid g3">${kpi('file-signature','Договор',rub(o.sum),((CONTRACTS.find(c=>c.obj===o.id)||{}).stages||'0 из 0')+' этапов закрыто')}${kpi('banknote','Оплачено',rub(o.paid),pct(o.paid,o.sum)+'%','up')}${kpi('hourglass','Остаток',rub(o.sum-o.paid),'по графику этапов')}</div>
+  <div class="card"><div class="card-head"><h2>Счета</h2></div><div class="tbl-wrap">${inv.length?invTable(inv):'<p class="muted">Счетов пока нет.</p>'}</div></div>`;
+},
+files(o){
+  return `<div class="card"><div class="card-head"><div><h2>Папка объекта</h2><div class="sub">Google Диск · копия на Яндекс Диске</div></div><button class="btn sm" data-act="toast" data-msg="Откроется папка на Google Диске">${ic('external-link')}Открыть</button></div>
+  <div class="tree">${[['folder',0,o.name],['folder',1,'01. Договор и ИРД'],['folder',1,'02. Проект (РД)'],['folder',1,'03. Сметы'],['folder',1,'04. ИТД'],['folder',2,'Общестроительные работы'],['folder',2,'Электромонтажные работы'],['folder',2,'Исполнительные схемы'],['folder',1,'05. Журналы'],['folder',1,'06. Сертификаты и паспорта'],['folder',1,'07. Закупки'],['folder',1,'08. Переписка']].map(f=>`<div class="d${f[1]}">${ic(f[1]===0?'folder-open':f[0])}${f[2]}</div>`).join('')}</div></div>`;
+}
+};
+
+function renderNav(){
+  const Z=ZONES[S.zone];
+  $('#zones').innerHTML=Object.entries(ZONES).map(([k,z])=>`<button role="tab" data-zone="${k}" aria-selected="${k===S.zone}">${ic(z.ic)}${z.t}</button>`).join('');
+  $('#side').innerHTML=`<div class="zone-head"><div class="zi">${ic(Z.ic)}</div><div><b>${Z.t}</b><span>${Z.d}</span></div></div>`+
+  Z.nav.map(([g,items])=>`<div class="nav-group"><div class="nav-title">${g}</div>${items.map(([id,l,i,n])=>{const c=typeof n==='function'?n():n;return `<button class="nav-item" data-go="${id}" ${(S.screen===id||(S.screen==='object'&&id==='objects'))?'aria-current="page"':''}><span class="nav-ico">${ic(i)}</span>${l}${c?`<span class="count">${c}</span>`:''}</button>`}).join('')}</div>`).join('')+
+  `<div class="side-foot">${ic('cloud')}<div><b>Google Диск подключён</b><br>Синхронизация 2 мин назад</div></div>`;
+  $('#aiChips').innerHTML=Z.ask.map(([q,l])=>`<button class="chip" data-ask="${esc(q)}">${esc(l)}</button>`).join('');
+}
+function render(){renderNav();$('#page').innerHTML=(R[S.screen]||R[ZONES[S.zone].home])();window.lucide&&lucide.createIcons()}
+function setZone(z){S.zone=z;try{localStorage.setItem('bp-zone',z)}catch(e){}}
+function go(screen,obj,tab){
+  if(screen==='object'){if(tab&&!ZONES[S.zone].tabs.includes(tab)&&TABZ[tab]&&!ZONES[S.zone].tabs.includes(tab))setZone(TABZ[tab])}
+  else{const z=zoneOf(screen);if(z!==S.zone)setZone(z)}
+  S.screen=screen;if(obj)S.obj=obj;if(tab)S.otab=tab;else if(obj)S.otab='summary';
+  render();$('#main').scrollTop=0;
+  try{history.replaceState(null,'','#'+(screen==='object'?'objects':screen))}catch(e){}
+}
+function goZone(z){setZone(z);const keep=S.screen==='object'||S.screen==='objects'||S.screen==='tasks'&&ZONES[z].nav.some(g=>g[1].some(i=>i[0]==='tasks'));go(keep?S.screen:ZONES[z].home,S.screen==='object'?S.obj:undefined,S.screen==='object'&&ZONES[z].tabs.includes(S.otab)?S.otab:undefined)}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2600)}
+
+/* ===== Формы «Создать» ===== */
+const objOpts=(f=()=>true)=>OBJ.filter(f).map(o=>[o.id,o.name]);
+const pickObj=(pre,list)=>list.some(x=>x[0]===pre.obj)?pre.obj:(list[0]||[])[0];
+const nextNum=(arr,get,re=/(\d+)/)=>{let m=0;arr.forEach(x=>{const r=String(get(x)).match(re);if(r)m=Math.max(m,+r[1])});return m+1};
+const isoToday='2026-10-23';
+const FORMS={
+ aosr:pre=>{const os=objOpts(o=>ITD[o.id]);return{title:'Акт ИТД по шаблону 344/пр',btn:'Сформировать черновик',fields:[
+  {id:'obj',label:'Объект',type:'select',opts:os,val:pickObj(pre,os)},
+  {id:'sec',label:'Вид работ',type:'select',opts:Object.values(ITD_LIB).map(l=>l.t)},
+  {id:'tpl',label:'Шаблон',type:'select',opts:['АОСР (прил. 3 к 344/пр)','АООК (прил. 4 к 344/пр)','Акт участка сети ИТО (прил. 5)']},
+  {id:'n',label:'Номер акта',val:String(nextNum(IDACTS,a=>a.n,/№\s*(\d+)/)),req:true},
+  {id:'w',label:'Освидетельствованные работы',type:'textarea',full:true,req:true,val:'Армирование и бетонирование плиты перекрытия 14 эт., оси 9–16/А–Г'},
+  {id:'d1',label:'Начало работ',type:'date',val:'2026-10-19'},
+  {id:'d2',label:'Окончание работ',type:'date',val:'2026-10-22',req:true},
+  {id:'m',label:'Материалы и документы о качестве',full:true,val:'Арматура А500С Ø12 (№4471), бетон B30 F150 W8 (№2210-17) — из «Сертификатов»'},
+  {id:'s',label:'Подписанты',full:true,val:'Из карточки объекта: застройщик, генподрядчик, технадзор, проектировщик'}],
+  make:v=>{const p=v.tpl.startsWith('АООК')?'АООК':v.tpl.startsWith('Акт участка')?'Акт ИТО':'АОСР';return{kind:'idact',data:{n:`${p} №${v.n}`,obj:v.obj,t:v.w,date:ruDate(v.d2),status:'Черновик',sec:v.sec,mats:v.m},msg:`${p} №${v.n} сохранён как черновик`,after:()=>go('object',v.obj,'itd')}}}},
+ journal:pre=>{const os=objOpts(o=>JOURNALS[o.id]);const ob=pickObj(pre,os);return{title:'Запись в журнал работ',btn:'Внести запись',fields:[
+  {id:'obj',label:'Объект',type:'select',opts:os,val:ob},
+  {id:'j',label:'Журнал',type:'select',opts:Object.entries(JLIB).map(([k,n])=>[k,`${k} — ${n}`])},
+  {id:'date',label:'Дата',type:'date',val:isoToday,req:true},
+  {id:'who',label:'Кто вносит',val:'Прораб Иванов А.'},
+  {id:'t',label:'Выполненные работы',type:'textarea',full:true,req:true,ph:'Что сделано, где (оси, отметки, участок), объём'}],
+  make:v=>({kind:'jentry',data:{obj:v.obj,j:v.j,date:ruDate(v.date),t:v.t,who:v.who},msg:`Запись в ${v.j} внесена`,after:()=>go('object',v.obj,'journals')})}},
+ pur:pre=>{const os=objOpts();return{title:'Заявка на закупку',btn:'Создать заявку',fields:[
+  {id:'obj',label:'Объект',type:'select',opts:os,val:pickObj(pre,os)},
+  {id:'qty',label:'Количество',req:true,ph:'например, 120 м'},
+  {id:'item',label:'Материал',full:true,req:true,ph:'Наименование, марка, ГОСТ'},
+  {id:'sup',label:'Поставщик',ph:'если уже выбран'},
+  {id:'sum',label:'Сумма, ₽',type:'number'}],
+  make:v=>{const n='З-0'+nextNum(PUR,p=>p.n);return{kind:'pur',data:{n,obj:v.obj,item:v.item,qty:v.qty,sum:+v.sum||0,sup:v.sup||'—',status:v.sup?'Счёт получен':'Поиск поставщика',cert:'Ждём паспорт'},msg:`Заявка ${n} создана`,after:()=>go('purchases')}}}},
+ est:pre=>{const os=objOpts();return{title:'Новая смета',btn:'Создать смету',fields:[
+  {id:'obj',label:'Объект',type:'select',opts:os,val:pickObj(pre,os)},
+  {id:'n',label:'Шифр',req:true,val:'ЛС-0'},
+  {id:'name',label:'Наименование',full:true,req:true},
+  {id:'method',label:'Метод и база',type:'select',opts:['Ресурсный, ФСНБ-2022','Ресурсно-индексный','Базисно-индексный, ФЕР-2020','СБЦ на изыскания']},
+  {id:'sum',label:'Сумма с НДС, ₽',type:'number'}],
+  make:v=>({kind:'est',data:{n:v.n,obj:v.obj,name:v.name,method:v.method,sum:+v.sum||0,ver:1,status:'Черновик'},msg:`Смета ${v.n} создана`,after:()=>go('estimates')})}},
+ inv:pre=>{const os=objOpts(o=>CONTRACTS.some(c=>c.obj===o.id));return{title:'Счёт заказчику',btn:'Выставить счёт',fields:[
+  {id:'obj',label:'Объект (договор)',type:'select',opts:os,val:pickObj(pre,os),full:true},
+  {id:'sum',label:'Сумма, ₽',type:'number',req:true},
+  {id:'date',label:'Дата счёта',type:'date',val:isoToday},
+  {id:'due',label:'Оплатить до',type:'date',val:'2026-11-06',req:true}],
+  make:v=>{const n='Счёт №'+nextNum(INVOICES,i=>i.n);const c=CONTRACTS.find(x=>x.obj===v.obj)||{};return{kind:'inv',data:{n,obj:v.obj,date:ruDate(v.date),client:c.client||(OBJ.find(o=>o.id===v.obj)||{}).client||'—',sum:+v.sum||0,due:ruDate(v.due),status:'Ожидает оплаты'},msg:`${n} выставлен`,after:()=>{S.ctab='invoices';go('contracts')}}}}},
+ act:pre=>{const os=objOpts();return{title:'Акт или КС-2 / КС-3',btn:'Создать акт',fields:[
+  {id:'obj',label:'Объект',type:'select',opts:os,val:pickObj(pre,os)},
+  {id:'kind',label:'Вид документа',type:'select',opts:['Акт сдачи-приёмки работ','Акт о приёмке и справка о стоимости']},
+  {id:'stage',label:'Этап',full:true,req:true,ph:'например, Этап 2: ИТД, 14 эт.'},
+  {id:'sum',label:'Сумма, ₽',type:'number',req:true}],
+  make:v=>{const kd=v.kind.startsWith('Акт о')?'КС-2 / КС-3 №':'Акт №';const n=kd+nextNum(ACTS,a=>a.n);return{kind:'act',data:{n,kind:v.kind,stage:v.stage,client:(OBJ.find(o=>o.id===v.obj)||{}).client||'—',sum:+v.sum||0,status:'Черновик'},msg:`${n} создан`,after:()=>{S.ctab='acts';go('contracts')}}}}},
+ contract:pre=>{const os=objOpts();return{title:'Договор с заказчиком',btn:'Создать договор',fields:[
+  {id:'obj',label:'Объект',type:'select',opts:os,val:pickObj(pre,os),full:true},
+  {id:'sum',label:'Сумма, ₽',type:'number',req:true},
+  {id:'stages',label:'Этапов',type:'number',val:'3'}],
+  make:v=>{const n='Д-2026/0'+nextNum(CONTRACTS,c=>c.n,/\/0*(\d+)/);const o=OBJ.find(x=>x.id===v.obj)||{};return{kind:'contract',data:{n,client:o.client||'—',obj:v.obj,sum:+v.sum||0,stages:`0 из ${+v.stages||1}`,status:'Черновик'},msg:`Договор ${n} создан`,after:()=>{S.ctab='contracts';go('contracts')}}}}},
+ obj:()=>({title:'Новый объект',btn:'Создать объект',fields:[
+  {id:'name',label:'Название',full:true,req:true,ph:'например, ЖК «Лесной», корпус 1'},
+  {id:'city',label:'Город',req:true},
+  {id:'client',label:'Заказчик',req:true,ph:'ООО «…»'},
+  {id:'work',label:'Виды работ',type:'checks',opts:[['ИТД','ИТД'],['ПД','ПД'],['Сметы','Сметы'],['Закупки','Закупки']],val:['ИТД']},
+  {id:'sum',label:'Сумма договора, ₽',type:'number'},
+  {id:'due',label:'Срок сдачи',type:'date'},
+  {id:'stage',label:'Текущий этап',full:true,val:'Сбор исходных данных'}],
+  make:v=>{const id='u'+Date.now().toString(36);return{kind:'obj',data:{id,name:v.name,city:v.city,client:v.client,work:v.work.length?v.work:['ИТД'],stage:v.stage||'Старт',progress:0,due:ruDate(v.due),sum:+v.sum||0,paid:0,status:'Старт'},msg:`Объект «${v.name}» создан`,after:()=>go('object',id)}}}),
+ team:pre=>({title:'Пригласить исполнителя',btn:'Добавить',fields:[
+  {id:'name',label:'Имя или организация',req:true,full:true},
+  {id:'spec',label:'Специализация',req:true,ph:'например, сметчик'},
+  {id:'form',label:'Форма работы',type:'select',opts:['Самозанятый','ИП','ООО, договор подряда','Штатный сотрудник']},
+  {id:'objs',label:'Доступ к объектам',type:'checks',opts:objOpts(),val:pre.obj?[pre.obj]:[]}],
+  make:v=>({kind:'team',data:{name:v.name,spec:v.spec,form:v.form,objs:v.objs},msg:`${v.name} добавлен(а) в исполнители`,after:()=>go('team')})}),
+ task:pre=>({title:'Новая задача',btn:'Создать задачу',fields:[
+  {id:'title',label:'Что сделать',full:true,req:true},
+  {id:'subj',label:'Объект или тема',type:'select',opts:OBJ.map(o=>o.name).concat(['Финансы','Общее']),val:pre.obj?objName(pre.obj):undefined},
+  {id:'date',label:'Срок',type:'date',val:isoToday,req:true},
+  {id:'group',label:'Когда',type:'select',opts:['Сегодня','На неделе','Позже']},
+  {id:'pri',label:'Важность',type:'select',opts:[['warn','Обычная'],['bad','Срочно'],['info','Можно позже'],['neutral','Без срока']]}],
+  make:v=>({kind:'task',data:{title:v.title,subj:v.subj,date:ruDate(v.date).slice(0,5),group:v.group,pri:v.pri},msg:'Задача добавлена',after:()=>go('tasks')})}),
+ lead:()=>({title:'Заявка от заказчика',btn:'Добавить в воронку',fields:[
+  {id:'client',label:'Заказчик',req:true,full:true,ph:'ООО «…»'},
+  {id:'work',label:'Что нужно',req:true,full:true,ph:'например, ИТД на склад'},
+  {id:'sum',label:'Оценка, ₽',type:'number'}],
+  make:v=>({kind:'lead',data:{client:v.client,work:v.work,sum:+v.sum||0},msg:'Заявка добавлена в воронку',after:()=>go('clients')})}),
+ pd:pre=>{const os=objOpts(o=>PD[o.id]||o.work.includes('ПД'));return{title:'Раздел проектной документации',btn:'Добавить раздел',fields:[
+  {id:'obj',label:'Объект',type:'select',opts:os,val:pickObj(pre,os),full:true},
+  {id:'num',label:'№ раздела',req:true,ph:'например, 5.3'},
+  {id:'code',label:'Шифр',req:true,ph:'ВО'},
+  {id:'name',label:'Наименование',full:true,req:true},
+  {id:'who',label:'Исполнитель',type:'select',opts:['Своими силами'].concat(TEAM.map(t=>t[0])),full:true}],
+  make:v=>({kind:'pd',data:{obj:v.obj,num:v.num,code:v.code,name:v.name,who:v.who},msg:`Раздел ${v.code} добавлен`,after:()=>{S.pdObj=v.obj;go('pd')}})}}
+};
+const CHOOSER=[['aosr','clipboard-check','Акт ИТД по шаблону','АОСР, АООК, акт ИТО'],['journal','notebook-pen','Запись в журнал','ОЖР, ЖВК, специальные'],['pur','shopping-cart','Заявка на закупку','материалы на объект'],['est','calculator','Смета','локальная, объектная'],['inv','receipt','Счёт','по договору'],['act','file-check','Акт / КС-2, КС-3','закрывающие'],['contract','file-signature','Договор','с заказчиком'],['obj','building-2','Объект','карточка и папка'],['task','calendar-check','Задача','со сроком'],['lead','handshake','Заявка заказчика','в воронку'],['pd','drafting-compass','Раздел ПД','в комплект'],['team','user-plus','Исполнитель','с ограниченным доступом']];
+let MPRE={};
+function defaultKind(){
+ const sc=S.screen;
+ if(sc==='object')return({journals:'journal',purchases:'pur',estimate:'est',itd:'aosr',project:PD[S.obj]?'pd':null,money:'inv'})[S.otab]||null;
+ if(sc==='contracts')return({contracts:'contract',invoices:'inv',acts:'act'})[S.ctab];
+ return({objects:'obj',tasks:'task',estimates:'est',purchases:'pur',clients:'lead',team:'team',settings:'team',pd:'pd',id:'aosr',journals:'journal','est-home':'est','itd-home':'aosr'})[sc]||null;
+}
+function ctxPre(){return S.screen==='object'?{obj:S.obj}:S.screen==='pd'?{obj:S.pdObj}:S.screen==='purchases'&&S.pobj!=='all'?{obj:S.pobj}:{}}
+function fieldHtml(f){
+ const id='f-'+f.id,v=f.val??'';
+ if(f.type==='checks')return `<fieldset class="full" style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px"><legend class="small" style="color:var(--fg-2);padding:0;margin-bottom:6px">${f.label}</legend><div class="checks" id="${id}">${f.opts.map(([val,l],i)=>`<label for="${id}-${i}"><input type="checkbox" id="${id}-${i}" value="${esc(val)}" ${(v||[]).includes(val)?'checked':''}>${esc(l)}</label>`).join('')}</div></fieldset>`;
+ let inp;
+ if(f.type==='select')inp=`<select id="${id}">${f.opts.map(o=>{const [val,l]=Array.isArray(o)?o:[o,o];return `<option value="${esc(val)}" ${val===v?'selected':''}>${esc(l)}</option>`}).join('')}</select>`;
+ else if(f.type==='textarea')inp=`<textarea id="${id}" rows="2" ${f.ph?`placeholder="${esc(f.ph)}"`:''}>${esc(v)}</textarea>`;
+ else inp=`<input id="${id}" type="${f.type||'text'}" value="${esc(v)}" ${f.ph?`placeholder="${esc(f.ph)}"`:''} ${f.type==='number'?'min="0" step="1" inputmode="numeric"':''}>`;
+ return `<label class="${f.full?'full':''}" for="${id}">${f.label}${f.req?' *':''}${inp}</label>`;
+}
+function openModal(kind,pre){
+ MPRE=pre||ctxPre();const m=$('#modal');
+ if(kind&&FORMS[kind]){
+  const F=FORMS[kind](MPRE);
+  m.innerHTML=`<div class="card-head" style="margin:0"><h2>${F.title}</h2><button class="icon-btn" data-close aria-label="Закрыть">${ic('x')}</button></div>
+  <form class="form" id="genForm" data-kind="${kind}" novalidate>${F.fields.map(fieldHtml).join('')}
+   <div class="err" id="formErr" hidden></div>
+   <div class="full actions" style="justify-content:flex-end"><button type="button" class="btn" data-opt="">${ic('arrow-left')}Другой документ</button><button type="button" class="btn" data-close>Отмена</button><button class="btn primary" type="submit">${ic('check')}${F.btn}</button></div></form>`;
+ }else{
+  m.innerHTML=`<div class="card-head" style="margin:0"><h2>Создать</h2><button class="icon-btn" data-close aria-label="Закрыть">${ic('x')}</button></div>
+  ${(()=>{const zk=ZONES[S.zone].chooser,b=o=>`<button class="opt" data-opt="${o[0]}">${ic(o[1])}<b>${o[2]}</b><span>${o[3]}</span></button>`;return `<div class="opts-h">${ZONES[S.zone].t}</div><div class="opts">${zk.map(k=>b(CHOOSER.find(c=>c[0]===k))).join('')}</div><div class="opts-h">Другие зоны</div><div class="opts">${CHOOSER.filter(c=>!zk.includes(c[0])).map(b).join('')}</div>`})()}
+  <p class="small muted" style="margin:0">Данные объекта, заказчика и договора подставляются автоматически.</p>`;
+ }
+ $('#overlay').hidden=false;window.lucide&&lucide.createIcons();
+ const first=m.querySelector('input:not([type=checkbox]),select,textarea');first&&setTimeout(()=>first.focus(),30);
+}
+function closeModal(){$('#overlay').hidden=true}
+function submitForm(form){
+ const kind=form.dataset.kind,F=FORMS[kind](MPRE),v={};
+ F.fields.forEach(f=>{const id='f-'+f.id;v[f.id]=f.type==='checks'?[...form.querySelectorAll(`#${id} input:checked`)].map(i=>i.value):(form.querySelector('#'+id)||{}).value?.trim()||''});
+ const miss=F.fields.filter(f=>f.req&&!(Array.isArray(v[f.id])?v[f.id].length:v[f.id]));
+ const err=form.querySelector('#formErr');
+ if(miss.length){err.textContent='Заполните: '+miss.map(f=>f.label).join(', ');err.hidden=false;form.querySelector('#f-'+miss[0].id)?.focus();return}
+ const r=F.make(v);closeModal();save(r.kind,r.data,r.msg);r.after&&r.after();
+}
+
+/* ===== Хранение: общая база панели ===== */
+const clone=x=>JSON.parse(JSON.stringify(x));
+const BASE={OBJ:clone(OBJ),IDACTS:clone(IDACTS),EST:clone(EST),PUR:clone(PUR),CONTRACTS:clone(CONTRACTS),INVOICES:clone(INVOICES),ACTS:clone(ACTS),TEAM:clone(TEAM),JENTRIES:clone(JENTRIES),TASKS:clone(TASKS),PIPE:clone(PIPE),JOURNALS:clone(JOURNALS),PD:clone(PD),INTEG:INTEG.map(x=>x[3])};
+const ARRS={OBJ,IDACTS,EST,PUR,CONTRACTS,INVOICES,ACTS,TEAM,JENTRIES,TASKS,PIPE};
+let RECS=[],LOCAL=[],FLAGS={};
+const STANDALONE=!(window.claude&&typeof window.claude.use==='function');
+function loadLocal(){try{const x=JSON.parse(localStorage.getItem('bp-local')||'[]');if(Array.isArray(x))LOCAL=x.filter(r=>r&&r.kind&&r.data);const f=JSON.parse(localStorage.getItem('bp-flags')||'{}');if(f&&typeof f==='object')FLAGS=f}catch(e){}}
+function storeLocal(){if(!STANDALONE)return false;try{localStorage.setItem('bp-local',JSON.stringify(LOCAL));localStorage.setItem('bp-flags',JSON.stringify(FLAGS));return true}catch(e){return false}}
+function resetData(){
+ Object.entries(ARRS).forEach(([k,a])=>{a.length=0;a.push(...clone(BASE[k]))});
+ [[JOURNALS,'JOURNALS'],[PD,'PD']].forEach(([m,k])=>{Object.keys(m).forEach(x=>delete m[x]);Object.assign(m,clone(BASE[k]))});
+ INTEG.forEach((x,i)=>x[3]=x[1] in FLAGS?!!FLAGS[x[1]]:BASE.INTEG[i]);
+}
+const cleanV=v=>typeof v==='string'?esc(v.slice(0,600)):Array.isArray(v)?v.slice(0,50).map(cleanV):v&&typeof v==='object'?Object.fromEntries(Object.entries(v).map(([k,x])=>[k,cleanV(x)])):typeof v==='number'&&isFinite(v)?v:v===true||v===false?v:'';
+function apply(k,d){
+ switch(k){
+  case 'idact':IDACTS.unshift(d);break;
+  case 'jentry':{JENTRIES.unshift(d);const j=JOURNALS[d.obj]||(JOURNALS[d.obj]=[]);let row=j.find(x=>x[0]===d.j);if(!row){row=[d.j,JLIB[d.j]||d.j,'','Ведётся','—'];j.push(row)}row[3]='Ведётся';row[4]=String(d.date).slice(0,5);break}
+  case 'pur':PUR.unshift(d);break;
+  case 'est':EST.push(d);break;
+  case 'inv':INVOICES.unshift(d);break;
+  case 'act':ACTS.unshift(d);break;
+  case 'contract':CONTRACTS.unshift(d);break;
+  case 'obj':if(!OBJ.some(o=>o.id===d.id))OBJ.push(d);break;
+  case 'team':TEAM.push([d.name,d.spec,d.form,Array.isArray(d.objs)?d.objs:[],0,'—']);break;
+  case 'task':{const g=TASKS.find(x=>x[0]===d.group)||TASKS[2];g[1].push([d.title,d.subj,['bad','warn','info','neutral'].includes(d.pri)?d.pri:'neutral',d.date]);break}
+  case 'lead':PIPE[0][1].push([d.client,d.work,+d.sum||0]);break;
+  case 'pd':(PD[d.obj]||(PD[d.obj]=[])).push([d.num,d.code,d.name,d.who,'Не начат',0]);break;
+ }
+}
+function rebuild(){
+ resetData();
+ [...RECS,...LOCAL].forEach(r=>{try{apply(r.kind,cleanV(r.data))}catch(e){}});
+ if(!OBJ.some(o=>o.id===S.obj)&&S.screen==='object')S.screen='objects';
+ render();
+}
+function setSave(on,txt){const b=$('#saveState');b.classList.toggle('on',on);b.textContent=txt||(on?'Сохраняется':'Локально');b.title=on?'Созданные записи сохраняются в базе панели и видны всем, у кого есть доступ':STANDALONE?'Записи сохраняются только в этом браузере на этом компьютере':'Записи видны только в этой вкладке и пропадут после перезагрузки'}
+async function save(kind,data,msg){
+ const rec={kind,data,at:Date.now()};
+ if(DB){
+  try{await DB.collection('records').add(rec);toast(msg+'. Сохранено в базе панели')}
+  catch(e){LOCAL.push(rec);rebuild();toast(msg+'. В базу не сохранилось ('+(e&&e.code==='not_granted'?'нет прав на запись':'нет связи')+'), запись видна только в этой вкладке')}
+ }else{LOCAL.push(rec);const ok=storeLocal();rebuild();toast(msg+(ok?'. Сохранено в этом браузере':'. Видно только в этой вкладке: база панели недоступна'))}
+}
+
+/* ===== Глобальный поиск ===== */
+const norm=s=>dec(s).toLowerCase().replace(/ё/g,'е');
+function sIndex(){
+ const R=[],add=(g,i,t,s,fn)=>R.push({g,i,t:dec(t),s:dec(s),fn});
+ Object.entries(ZONES).forEach(([zk,z])=>z.nav.forEach(([gr,items])=>items.forEach(([id,l,i])=>add('Разделы панели',i,l,'Зона «'+z.t+'» · '+gr,()=>{setZone(zk);go(id)}))));
+ OBJ.forEach(o=>add('Объекты','building-2',o.name,`${o.client} · ${o.city} · ИНН ${INN[dec(o.client)]||'—'}`,()=>go('object',o.id)));
+ IDACTS.forEach(a=>add('Исполнительная документация','clipboard-check',`${a.n} — ${a.t}`,`${objName(a.obj)||''} · ${a.date} · ${a.status}`,()=>go('object',a.obj,'itd')));
+ Object.entries(JOURNALS).forEach(([id,js])=>js.forEach(j=>add('Журналы','notebook-pen',`${j[0]} — ${j[1]}`,`${objName(id)} · ${j[3]} · последняя запись ${j[4]}`,()=>go('object',id,'journals'))));
+ JENTRIES.forEach(x=>add('Записи в журналах','pen-line',`${x.j}: ${x.t}`,`${objName(x.obj)} · ${x.date} · ${x.who||''}`,()=>go('object',x.obj,'journals')));
+ Object.entries(CERTS).forEach(([id,cs])=>cs.forEach(c=>add('Сертификаты и паспорта','badge-check',c[0],`${c[1]} · ${c[2]} · ${c[3]}`,()=>go('object',id,'certs'))));
+ EST.forEach(e=>add('Сметы','calculator',`${e.n} — ${e.name}`,`${objName(e.obj)} · ${rub(+e.sum||0)} · ${e.status}`,()=>go('object',e.obj,'estimate')));
+ Object.entries(PD).forEach(([id,rs])=>rs.forEach(r=>add('Проектная документация','drafting-compass',`${r[1]} — ${r[2]}`,`${objName(id)} · ${r[3]} · ${r[4]}`,()=>{S.pdObj=id;go('pd')})));
+ PUR.forEach(p=>add('Закупки','shopping-cart',`${p.n} — ${p.item}`,`${objName(p.obj)} · ${p.sup} · ${p.status}`,()=>{S.pobj='all';go('purchases')}));
+ CONTRACTS.forEach(c=>add('Договоры','file-signature',`${c.n} — ${c.client}`,`ИНН ${INN[dec(c.client)]||'—'} · ${rub(+c.sum||0)} · ${c.status}`,()=>{S.ctab='contracts';go('contracts')}));
+ INVOICES.forEach(c=>add('Счета','receipt',`${c.n} — ${c.client}`,`${rub(+c.sum||0)} · до ${c.due} · ${c.status}`,()=>{S.ctab='invoices';go('contracts')}));
+ ACTS.forEach(c=>add('Акты, КС-2, КС-3','file-check',`${c.n} — ${c.stage}`,`${c.client} · ${rub(+c.sum||0)} · ${c.status}`,()=>{S.ctab='acts';go('contracts')}));
+ OPS.forEach(o=>add('Банк','landmark',`${o[2]}: ${o[3]}`,`${o[0]} · ${o[1]} · ${o[4]>0?'+':'−'}${rub(Math.abs(o[4]))}`,()=>go('finance')));
+ PIPE.forEach(([st,cs])=>cs.forEach(c=>add('Заказчики','handshake',c[0],`${c[1]} · ${st} · ИНН ${INN[dec(c[0])]||'—'}`,()=>go('clients'))));
+ TEAM.forEach(t=>add('Исполнители','users',t[0],`${t[1]} · ${t[2]}`,()=>go('team')));
+ TASKS.forEach(([g,ts])=>ts.forEach(t=>add('Задачи','calendar-check',t[0],`${t[1]} · ${g} · ${t[3]}`,()=>go('tasks'))));
+ KB.forEach(k=>add('Шаблоны и нормативы','library',k[1],`${k[0]} · ${k[2]}`,()=>go('kb')));
+ return R;
+}
+let SR=[],SI=0;
+function hl(s,tok){let h=esc(s);tok.forEach(t=>{if(t.length<2)return;const i=norm(s).indexOf(t);if(i>=0){const raw=s.slice(i,i+t.length);h=h.replace(esc(raw),`<mark>${esc(raw)}</mark>`)}});return h}
+function runSearch(){
+ const q=$('#q').value,box=$('#sres'),tok=norm(q).split(/\s+/).filter(Boolean);
+ if(!tok.length){box.hidden=true;$('#q').setAttribute('aria-expanded','false');return}
+ const all=sIndex().filter(r=>{const h=norm(r.t+' '+r.s);return tok.every(t=>h.includes(t))});
+ const per={};SR=all.filter(r=>(per[r.g]=(per[r.g]||0)+1)<=6).slice(0,40);SI=0;
+ if(!SR.length)box.innerHTML=`<div class="none">По запросу «${esc(q)}» ничего нет. Ищите по названию объекта, номеру акта, счёта или договора, ИНН, материалу.</div>`;
+ else{let g='',h='';SR.forEach((r,i)=>{if(r.g!==g){g=r.g;h+=`<div class="grp">${esc(g)}</div>`}h+=`<button type="button" role="option" data-sr="${i}" aria-selected="${i===SI}">${ic(r.i)}<span><div class="st">${hl(r.t,tok)}</div><div class="ss">${hl(r.s,tok)}</div></span></button>`});box.innerHTML=h}
+ box.hidden=false;$('#q').setAttribute('aria-expanded','true');window.lucide&&lucide.createIcons();
+}
+function pickSR(i){const r=SR[i];if(!r)return;$('#sres').hidden=true;$('#q').value='';$('#q').blur();r.fn()}
+$('#q').addEventListener('input',runSearch);
+$('#q').addEventListener('focus',()=>{if($('#q').value)runSearch()});
+$('#q').addEventListener('keydown',e=>{
+ const box=$('#sres');
+ if(e.key==='Escape'){box.hidden=true;return}
+ if(box.hidden||!SR.length){if(e.key==='Enter')runSearch();return}
+ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();SI=(SI+(e.key==='ArrowDown'?1:-1)+SR.length)%SR.length;box.querySelectorAll('[data-sr]').forEach(b=>b.setAttribute('aria-selected',+b.dataset.sr===SI));box.querySelector(`[data-sr="${SI}"]`)?.scrollIntoView({block:'nearest'})}
+ if(e.key==='Enter'){e.preventDefault();pickSR(SI)}
+});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#searchBox'))$('#sres').hidden=true});
+
+/* ===== AI-помощник ===== */
+let aiHist=[],aiBusy=false;
+function aiErr(e){const c=e&&e.code;return c==='not_granted'?'Доступ к AI для этой страницы не разрешён. Разрешите его в меню «Разрешения» артефакта.':c==='rate_limited'?'Слишком много запросов подряд. Подождите минуту и повторите.':c==='prompt_too_large'?'Слишком большой запрос. Сформулируйте вопрос короче.':c==='invalid_json'||c==='empty_completion'?'AI вернул пустой или неполный ответ. Повторите запрос.':'AI сейчас не отвечает'+(e&&e.message?': '+e.message:'.')}
+function aiContext(){
+ const itd={};Object.keys(ITD).forEach(id=>{itd[objName(id)]={};Object.keys(ITD_LIB).forEach(k=>{if(ITD[id][k])itd[objName(id)][ITD_LIB[k].t]=ITD_LIB[k].docs.map((d,i)=>`${d[0]}: ${ITD[id][k][i]} из ${ITD[id][k+'_t'][i]}`)})});
+ const ob=OBJ.map(o=>({id:o.id,объект:o.name,город:o.city,заказчик:o.client,работы:o.work,этап:o.stage,готовность:o.progress+'%',срок:o.due,договор:o.sum,оплачено:o.paid,статус:o.status}));
+ const by=id=>objName(id)||id;
+ return dec(JSON.stringify({
+  сегодня:'пятница, 23.10.2026',открытая_зона:ZONES[S.zone].t,объекты:ob,ИТД_по_разделам:itd,
+  акты_ИД:IDACTS.map(a=>({...a,obj:by(a.obj)})),
+  журналы:Object.fromEntries(Object.entries(JOURNALS).map(([k,v])=>[by(k),v.map(j=>`${j[0]} ${j[1]}: ${j[3]}, последняя запись ${j[4]}`)])),
+  записи_журналов:JENTRIES.map(x=>({...x,obj:by(x.obj)})),
+  сертификаты:Object.fromEntries(Object.entries(CERTS).map(([k,v])=>[by(k),v.map(c=>`${c[0]} — ${c[1]}, ${c[2]}: ${c[3]}`)])),
+  сметы:EST.map(e=>({...e,obj:by(e.obj)})),проектная_док:Object.fromEntries(Object.entries(PD).map(([k,v])=>[by(k),v.map(r=>`${r[0]} ${r[1]} ${r[2]} — ${r[3]}, ${r[4]}, замечаний ${r[5]}`)])),
+  закупки:PUR.map(p=>({...p,obj:by(p.obj)})),договоры:CONTRACTS.map(c=>({...c,obj:c.obj?by(c.obj):'—'})),счета:INVOICES.map(i=>({...i,obj:by(i.obj)})),акты:ACTS,
+  банк_остатки:{'Т-Банк':784200,'СберБизнес':452200},выписка:OPS.map(o=>({дата:o[0],банк:o[1],контрагент:o[2],назначение:o[3],сумма:o[4]})),
+  исполнители:TEAM.map(t=>({имя:t[0],специализация:t[1],форма:t[2],объекты:t[3].map(by),к_оплате:t[4],рейтинг:t[5]})),
+  задачи:TASKS,воронка:PIPE,интеграции:INTEG.map(x=>`${x[1]}: ${x[3]?'подключено':'не подключено'}`)
+ }));
+}
+const AI_SYS=`Ты AI-помощник в бизнес-панели проектно-сметного бюро: исполнительная документация (ИТД) по Приказу Минстроя 344/пр, журналы по 1026/пр, сметы, проектная документация, закупки, договоры, счета, банк. Руководитель задаёт вопросы по своим объектам.
+Правила: отвечай по-русски, коротко и по делу, только на основе данных панели ниже. Если данных для ответа нет, так и скажи и подскажи, где их взять. Суммы пиши с пробелами между разрядами и знаком ₽. Даты в формате ДД.ММ. Не используй markdown-заголовки, ** и таблицы; списки делай строками, начинающимися с «• ». Если просят письмо или напоминание, напиши готовый текст. Все данные в панели примерные.`;
+function addMsg(cls,text){const ms=$('#msgs'),d=document.createElement('div');d.className='msg '+cls;d.textContent=text;ms.appendChild(d);ms.scrollTop=ms.scrollHeight;return d}
+async function askAI(q){
+ q=(q||'').trim();if(!q||aiBusy)return;
+ addMsg('me',q);$('#aiInput').value='';
+ if(!SAMPLE){addMsg('ai err','AI недоступен в этом просмотре. Откройте панель на claude.ai, войдя в аккаунт.');return}
+ aiBusy=true;$('#aiForm button').disabled=true;
+ const out=addMsg('ai','Думаю…');
+ const msgs=aiHist.length?[...aiHist,{role:'user',content:q}]:[{role:'user',content:`${AI_SYS}\n\nДанные панели (JSON):\n${aiContext()}\n\nВопрос: ${q}`}];
+ try{
+  const r=await SAMPLE(msgs,{cache:false,modelTier:'default',onText:({text})=>{if(text){out.textContent=text;$('#msgs').scrollTop=$('#msgs').scrollHeight}}});
+  out.textContent=r.text||'Ответ пустой. Переформулируйте вопрос.';
+  aiHist=[...msgs,{role:'assistant',content:r.text||''}];
+  if(aiHist.length>13)aiHist=[aiHist[0],aiHist[1],...aiHist.slice(-10)];
+ }catch(e){out.classList.add('err');out.textContent=(e&&e.text?e.text+'\n\n':'')+aiErr(e)}
+ aiBusy=false;$('#aiForm button').disabled=false;
+}
+
+/* ===== События ===== */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-go],[data-obj],[data-act],[data-otab],[data-sec],[data-pdobj],[data-pobj],[data-ctab],[data-sw],[data-opt],[data-close],[data-q],[data-sr],[data-ask],[data-zone]');
+  if(!t)return;
+  if(t.dataset.sr!==undefined)return pickSR(+t.dataset.sr);
+  if(t.dataset.ask){toggleAI(true);return askAI(t.dataset.ask)}
+  if(t.hasAttribute('data-close'))return closeModal();
+  if(t.hasAttribute('data-opt'))return openModal(t.dataset.opt||null,MPRE);
+  if(t.dataset.zone)return goZone(t.dataset.zone);
+  if(t.dataset.go){if(t.dataset.pdobj)S.pdObj=t.dataset.pdobj;return go(t.dataset.go)}
+  if(t.dataset.obj)return go('object',t.dataset.obj,t.dataset.tab);
+  if(t.dataset.otab){S.otab=t.dataset.otab;return render()}
+  if(t.dataset.sec){S.sec=t.dataset.sec;return render()}
+  if(t.dataset.pdobj){S.pdObj=t.dataset.pdobj;return render()}
+  if(t.dataset.pobj){S.pobj=t.dataset.pobj;return render()}
+  if(t.dataset.ctab){S.ctab=t.dataset.ctab;return render()}
+  if(t.dataset.q){return runSupplierSearch(t.dataset.q)}
+  if(t.dataset.sw){const x=INTEG[+t.dataset.sw];x[3]=!x[3];FLAGS[x[1]]=x[3];render();toast(x[1]+(x[3]?': подключено':': отключено'));if(DB)DB.doc('state/integrations').set({on:FLAGS}).catch(()=>toast('Переключатель не сохранился в базе панели'));else storeLocal();return}
+  const a=t.dataset.act;
+  if(a==='new'){const k=t.dataset.kind||defaultKind();openModal(k,ctxPre())}
+  if(a==='new-aosr')openModal('aosr',S.screen==='object'?{obj:S.obj}:{obj:'o1'});
+  if(a==='ai')toggleAI(true);
+  if(a==='toast')toast(t.dataset.msg);
+});
+$('#overlay').addEventListener('click',e=>{if(e.target.id==='overlay')closeModal()});
+document.addEventListener('input',e=>{if(e.target.id==='aiPurQ')S.aiq=e.target.value});
+document.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(e.target.id==='genForm')submitForm(e.target);
+  if(e.target.id==='aiPur')runSupplierSearch($('#aiPurQ').value);
+  if(e.target.id==='aiForm')askAI($('#aiInput').value);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();toggleAI(false)}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#q').focus()}
+});
+function toggleAI(on){$('#drawer').hidden=!on}
+$('#aiBtn').onclick=()=>toggleAI($('#drawer').hidden);
+$('#aiClose').onclick=()=>toggleAI(false);
+
+const THEMES=['system','light','dark'],TI={system:['monitor','Тема: как в системе'],light:['sun','Тема: светлая'],dark:['moon','Тема: тёмная']};
+function setTheme(t){
+  S.theme=t;const r=document.documentElement;
+  if(t==='system')r.removeAttribute('data-theme');else r.dataset.theme=t;
+  const b=$('#themeBtn');b.innerHTML=ic(TI[t][0]);b.setAttribute('aria-label',TI[t][1]);b.title=TI[t][1];
+  window.lucide&&lucide.createIcons();
+  try{localStorage.setItem('bp-theme',t)}catch(e){}
+}
+$('#themeBtn').onclick=()=>setTheme(THEMES[(THEMES.indexOf(S.theme)+1)%3]);
+
+let th=null;try{th=localStorage.getItem('bp-theme')}catch(e){}
+let zs=null;try{zs=localStorage.getItem('bp-zone')}catch(e){}if(ZONES[zs]){S.zone=zs;S.screen=ZONES[zs].home}
+const h=(location.hash||'').slice(1);if(R[h]&&h!=='object'){S.screen=h;S.zone=zoneOf(h)}
+if(th)setTheme(th);else S.theme=document.documentElement.dataset.theme||'system';
+if(STANDALONE){loadLocal();setSave(false,'В этом браузере');rebuild()}else setSave(false);
+if(window.claude&&typeof window.claude.use==='function'){
+ window.claude.use('db').then(db=>{
+  if(!db){setSave(false,'Локально');return}
+  DB=db;setSave(true);
+  db.collection('records').orderBy('at').onSnapshot(s=>{RECS=s.docs.map(d=>d.data()).filter(r=>r&&typeof r.kind==='string'&&r.data&&typeof r.data==='object');rebuild()},()=>setSave(false,'Нет связи с базой'));
+  db.doc('state/integrations').onSnapshot(s=>{const d=s.exists&&s.data();FLAGS=(d&&d.on&&typeof d.on==='object')?d.on:{};rebuild()},()=>{});
+ }).catch(()=>{});
+ window.claude.use('sample').then(s=>{SAMPLE=s||null}).catch(()=>{});
+}
+render();
+</script>
+
+</body>
+</html>
