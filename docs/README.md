@@ -29,7 +29,7 @@
 2. [Универсальный контракт интеграции](AGENTS/INTEGRATION_CONTRACT_v0.1.md).
 3. [Роль ГИП](AGENTS/roles/GIP.md).
 4. [Роль ПТО](AGENTS/roles/PTO.md).
-5. [Роль сметчика](AGENTS/roles/ESTIMATOR.md).
+5. [Роль сметчика](AGENTS/roles/ESTIMATOR.md).\n6. [План испытаний независимой платформы](AGENTS/TEST_PLAN_v0.1.md).
 
 ### Общая архитектура и решения
 
