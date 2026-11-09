@@ -13,6 +13,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\\..\\src\\ITD.Infrastructure\\ITD.Infrastructure.csproj" />
+    <ProjectReference Include="../../src/ITD.Infrastructure/ITD.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
