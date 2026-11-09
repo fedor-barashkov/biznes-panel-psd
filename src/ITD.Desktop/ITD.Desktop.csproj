@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>ITD.Desktop</AssemblyName>
+    <RootNamespace>ITD.Desktop</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ITD.Core\ITD.Core.csproj" />
+    <ProjectReference Include="..\ITD.Infrastructure\ITD.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
