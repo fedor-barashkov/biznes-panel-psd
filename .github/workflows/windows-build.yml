@@ -18,6 +18,8 @@ jobs:
           dotnet-version: 10.0.x
       - name: Restore
         run: dotnet restore ITD.sln
+      - name: Test
+        run: dotnet test ITD.sln --configuration Release --no-restore
       - name: Build
         run: dotnet build ITD.sln --configuration Release --no-restore
       - name: Publish self-contained Windows x64
