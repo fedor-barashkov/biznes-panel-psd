@@ -16,7 +16,7 @@ public sealed class SqliteDatabase
             DataSource = fullPath,
             Mode = SqliteOpenMode.ReadWriteCreate,
             Cache = SqliteCacheMode.Shared,
-            Pooling = true,
+            Pooling = false,
             ForeignKeys = true,
             DefaultTimeout = 10
         }.ToString();
