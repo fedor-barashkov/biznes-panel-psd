@@ -1,5 +1,6 @@
 using ITD.Infrastructure.Data;
 using ITD.Infrastructure.Repositories;
+using Xunit;
 
 namespace ITD.Infrastructure.Tests;
 
