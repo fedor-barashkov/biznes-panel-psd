@@ -67,7 +67,7 @@
             <DataGridTextColumn Header="Наименование объекта" Binding="{Binding Name}" Width="2*" />
             <DataGridTextColumn Header="Адрес" Binding="{Binding Address}" Width="2*" />
             <DataGridTextColumn Header="Заказчик" Binding="{Binding CustomerName}" Width="*" />
-            <DataGridTextColumn Header="Создан" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy}" Width="110" />
+            <DataGridTextColumn Header="Создан" Binding="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy}}" Width="110" />
           </DataGrid.Columns>
         </DataGrid>
         <TextBlock x:Name="StatusText" Grid.Row="3" Margin="0,12,0,0"
