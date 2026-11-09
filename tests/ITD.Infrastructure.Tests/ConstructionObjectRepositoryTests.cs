@@ -59,4 +59,56 @@ public sealed class ConstructionObjectRepositoryTests
             Directory.Delete(root, recursive: true);
         }
     }
+    [Fact]
+    public async Task SubObject_IsBoundToParentObject()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "itd-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var database = new SqliteDatabase(Path.Combine(root, "test.db"));
+            await database.InitializeAsync();
+            var objects = new ConstructionObjectRepository(database);
+            var parent = await objects.CreateAsync("Основной объект", null, null, null);
+            var subObjects = new SubObjectRepository(database);
+
+            await subObjects.CreateAsync(parent.Id, "Корпус 1");
+            await subObjects.CreateAsync(parent.Id, "Корпус 2");
+
+            var items = await subObjects.GetByParentAsync(parent.Id);
+            Assert.Equal(2, items.Count);
+            Assert.All(items, item => Assert.Equal(parent.Id, item.ParentObjectId));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task Organization_PersistsInnAndLegalDetails()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "itd-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var database = new SqliteDatabase(Path.Combine(root, "test.db"));
+            await database.InitializeAsync();
+            var organizations = new OrganizationRepository(database);
+
+            await organizations.CreateAsync(
+                "ООО «Тест»", "7701234567", "770101001", "1027700000000", "г. Москва");
+
+            var item = Assert.Single(await organizations.GetAllAsync());
+            Assert.Equal("7701234567", item.Inn);
+            Assert.Equal("770101001", item.Kpp);
+            Assert.Equal("1027700000000", item.Ogrn);
+            Assert.Equal("г. Москва", item.LegalAddress);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
 }
