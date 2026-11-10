@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/security/authorization-decision/0.1",
+  "title": "Policy decision permit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision_id",
+    "request_id",
+    "actor",
+    "action",
+    "resource",
+    "effect",
+    "scope",
+    "policy_version",
+    "issued_at",
+    "expires_at",
+    "nonce",
+    "reason_codes"
+  ],
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_id",
+        "actor_type"
+      ],
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_type": {
+          "enum": [
+            "human",
+            "agent",
+            "service"
+          ]
+        },
+        "role": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        }
+      }
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resource_type",
+        "resource_id",
+        "revision"
+      ],
+      "properties": {
+        "resource_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "object_id": {
+          "type": "string"
+        },
+        "subobject_id": {
+          "type": "string"
+        }
+      }
+    },
+    "effect": {
+      "enum": [
+        "allow",
+        "deny"
+      ]
+    },
+    "scope": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "policy_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 32
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approval_record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revocation_ref": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "enum": [
+              "boq.approve",
+              "itd.release",
+              "estimate.approve",
+              "grand_smeta.export",
+              "risk.accept"
+            ]
+          },
+          "effect": {
+            "const": "allow"
+          }
+        },
+        "required": [
+          "action",
+          "effect"
+        ]
+      },
+      "then": {
+        "required": [
+          "approval_record_id"
+        ],
+        "properties": {
+          "actor": {
+            "properties": {
+              "actor_type": {
+                "const": "human"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
