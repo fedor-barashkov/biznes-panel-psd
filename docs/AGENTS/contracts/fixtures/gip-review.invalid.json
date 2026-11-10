@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1",
+  "project_id": "PRJ-001",
+  "source_set": [],
+  "review_status": "approved",
+  "boq_items": [
+    {
+      "item_id": "BOQ-01",
+      "work_code": "",
+      "work_name": "Позиция без источника",
+      "unit": "м³",
+      "quantity_basis": "calculated",
+      "source_refs": [],
+      "review_state": "checked"
+    }
+  ],
+  "issues": [],
+  "open_questions": []
+}
