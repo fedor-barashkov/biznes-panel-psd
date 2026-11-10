@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/trusted-context/pto-release/0.1",
+  "title": "Trusted PTO release context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "template_registry",
+    "document_revision",
+    "approval_record"
+  ],
+  "properties": {
+    "template_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "template_id",
+        "revision",
+        "active"
+      ],
+      "properties": {
+        "template_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "active": {
+          "const": true
+        }
+      }
+    },
+    "document_revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approval_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approval_id",
+        "artifact_id",
+        "revision",
+        "decision",
+        "actor_id",
+        "actor_role",
+        "authorized"
+      ],
+      "properties": {
+        "approval_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "decision": {
+          "const": "approved"
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_role": {
+          "const": "PTO_RELEASE_AUTHORITY"
+        },
+        "authorized": {
+          "const": true
+        }
+      }
+    }
+  }
+}
