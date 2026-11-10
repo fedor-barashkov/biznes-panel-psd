@@ -45,6 +45,27 @@ class GIPBusinessRulesTests(unittest.TestCase):
         self.assertIn("GIP_APPROVAL_NOT_AUTHORIZED",
                       {x["code"] for x in validate_gip_result(doc)})
 
+    def test_approved_boq_is_blocked_with_open_major_issue(self):
+        doc = copy.deepcopy(self.doc)
+        doc["approval_status"] = "approved_by_gip"
+        doc["open_questions"] = []
+        doc["positions"][0]["verification_status"] = "verified"
+        doc["issues"] = [{"issue_id": "I-1", "severity": "major",
+                          "description": "Конфликт отметок", "source_refs": []}]
+        context = {"approval_record": {
+            "approval_id": "APR-1", "artifact_id": "BOQ-001", "revision": 1,
+            "decision": "approved", "actor_id": "user-1", "actor_role": "GIP",
+            "authorized": True,
+        }}
+        self.assertIn("GIP_APPROVAL_HAS_BLOCKING_ISSUES",
+                      {x["code"] for x in validate_gip_result(doc, context)})
+
+    def test_evidence_must_reference_known_source_and_nonempty_locator(self):
+        doc = copy.deepcopy(self.doc)
+        doc["positions"][0]["evidence"][0]["source_id"] = "UNKNOWN"
+        codes = {x["code"] for x in validate_gip_result(doc)}
+        self.assertIn("GIP_EVIDENCE_SOURCE_UNKNOWN", codes)
+
     def test_calculated_quantity_requires_formula_and_calculation_evidence(self):
         doc = copy.deepcopy(self.doc)
         p = doc["positions"][0]
@@ -103,6 +124,7 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
             "boq_registry": {
                 "boq_id": "BOQ-001", "revision": 2,
                 "approval_status": "approved_by_gip", "authorized": True,
+                "position_ids": ["BOQ-POS-001"],
             }
         }
 
@@ -138,6 +160,25 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
         self.context["round_trip_check"]["result"] = "differences"
         self.assertIn("ESTIMATOR_ROUND_TRIP_NOT_PASSED",
                       {x["code"] for x in validate_estimator_result(self.doc, self.context)})
+
+    def test_approval_requires_position_code_in_preservation_scope(self):
+        self._make_approved()
+        self.doc["data_preservation_check"]["checked_fields"].remove("position_code")
+        codes = {x["code"] for x in validate_estimator_result(self.doc, self.context)}
+        self.assertIn("ESTIMATOR_PRESERVATION_GATE_FAILED", codes)
+
+    def test_approval_requires_source_position_in_trusted_boq_revision(self):
+        self._make_approved()
+        self.context["boq_registry"]["position_ids"] = ["OTHER-POSITION"]
+        codes = {x["code"] for x in validate_estimator_result(self.doc, self.context)}
+        self.assertIn("ESTIMATOR_SOURCE_POSITION_UNKNOWN", codes)
+
+    def test_resources_and_coefficients_must_be_in_preservation_scope(self):
+        self._make_approved()
+        self.doc["positions"][0]["resource_codes"] = ["RES-01"]
+        self.doc["positions"][0]["coefficients"] = [{"code": "K-1", "value": 1.1}]
+        codes = {x["code"] for x in validate_estimator_result(self.doc, self.context)}
+        self.assertIn("ESTIMATOR_PRESERVATION_SCOPE_INCOMPLETE", codes)
 
 
 class QABusinessRulesTests(unittest.TestCase):
