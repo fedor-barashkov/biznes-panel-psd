@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/roles/qa-review-result/0.1",
+  "title": "Construction QA Review Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result_version",
+    "review_id",
+    "subject",
+    "criteria_version",
+    "status",
+    "checks",
+    "findings",
+    "unverified_items",
+    "reviewed_at"
+  ],
+  "properties": {
+    "result_version": {
+      "const": "0.1"
+    },
+    "review_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "artifact_version",
+        "artifact_type"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string"
+        },
+        "artifact_version": {
+          "type": "string"
+        },
+        "artifact_type": {
+          "type": "string"
+        },
+        "author_agent_id": {
+          "type": "string"
+        }
+      }
+    },
+    "criteria_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "FAILED",
+        "CONDITIONAL_PASS",
+        "QA_PASSED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "check_id",
+          "result",
+          "evidence_refs"
+        ],
+        "properties": {
+          "check_id": {
+            "type": "string"
+          },
+          "requirement_id": {
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "passed",
+              "failed",
+              "blocked",
+              "not_run",
+              "not_applicable"
+            ]
+          },
+          "method": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding_id",
+          "severity",
+          "description",
+          "status"
+        ],
+        "properties": {
+          "finding_id": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "BLOCKER",
+              "CRITICAL",
+              "MAJOR",
+              "MINOR",
+              "INFO"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "requirement_id": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "closure_criteria": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "fixed_pending_recheck",
+              "closed",
+              "accepted_risk"
+            ]
+          }
+        }
+      }
+    },
+    "unverified_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recheck_of_review_id": {
+      "type": "string"
+    }
+  }
+}
