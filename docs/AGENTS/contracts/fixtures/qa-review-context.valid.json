@@ -8,6 +8,8 @@
     "decision_id": "RISK-001",
     "finding_ids": [
       "F-001"
-    ]
+    ],
+    "actor_id": "risk-owner-1",
+    "actor_type": "human"
   }
 }
