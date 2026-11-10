@@ -63,7 +63,7 @@ JSON Schema проверяет структуру, типы и обязател�
 - Для `QA_PASSED` все обязательные проверки должны быть `passed` или `not_applicable`; у каждой пройденной проверки должно быть доказательство; непроверенных пунктов быть не должно.
 - Незакрытые BLOCKER/CRITICAL/MAJOR запрещают `QA_PASSED`.
 - Открытые MINOR допускаются для `QA_PASSED` только при наличии отдельной утверждённой политики выпуска.
-- `CONDITIONAL_PASS` требует отсутствия незакрытых BLOCKER/CRITICAL, конкретного открытого MAJOR/MINOR риска и доверенного решения с владельцем риска.
+- `CONDITIONAL_PASS` требует отсутствия незакрытых BLOCKER/CRITICAL, завершённых обязательных проверок, отсутствия непроверенных пунктов и доверенного решения с владельцем риска, явно перечисляющего все принимаемые finding ID.
 - `QA_PASSED` означает прохождение набора QA-проверок, но не означает инженерное утверждение, подписание, приёмку работ или разрешение на выпуск документа.
 
 ## 7. Доверенный контекст
@@ -75,7 +75,7 @@ JSON Schema проверяет структуру, типы и обязател�
 - `boq_registry`: `boq_id`, `revision`, `approval_status`, `authorized`.
 - `round_trip_check`: `performed`, `result`.
 - `reviewer_agent_id`, `reviewer_independent`.
-- `risk_acceptance`: `approved`, `owner_id`, `decision_id`.
+- `risk_acceptance`: `approved`, `owner_id`, `decision_id`, `finding_ids` (все открытые MAJOR/MINOR, принимаемые решением).
 - `document_revision`, `estimate_revision`, `minor_risk_policy_approved`.
 
 Это логические поля контекста, а не готовая модель аутентификации. В production они должны создаваться только доверенным компонентом и связываться с неизменяемыми записями аудита.
