@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "object_id": "OBJ-001",
+  "document_id": "AOSR-002",
+  "document_type": "AOSR",
+  "template": {
+    "template_id": "T",
+    "template_version": "1",
+    "template_hash": "bad-hash"
+  },
+  "document_status": "released",
+  "fields": [],
+  "attachments": [],
+  "source_document_ids": []
+}
