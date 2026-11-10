@@ -204,6 +204,9 @@ def validate_qa_review_result(doc: dict, context: dict | None = None) -> list[di
     unresolved = [f for f in findings if f.get("status") not in {"closed", "accepted_risk"}]
     severe = [f for f in unresolved if f.get("severity") in {"BLOCKER", "CRITICAL"}]
     major = [f for f in unresolved if f.get("severity") == "MAJOR"]
+    accepted_risks = {f.get("finding_id") for f in findings if f.get("status") == "accepted_risk"}
+    if accepted_risks and not _risk_acceptance_matches(context, accepted_risks):
+        issues.append(_issue("QA_ACCEPTED_RISK_UNVERIFIED", "findings", "Статус accepted_risk требует доверенной записи принятия риска с перечислением всех замечаний."))
 
     if status == "QA_PASSED":
         if not independent:
@@ -217,10 +220,7 @@ def validate_qa_review_result(doc: dict, context: dict | None = None) -> list[di
         if severe or major:
             issues.append(_issue("QA_BLOCKING_FINDINGS_REMAIN", "findings", "QA_PASSED невозможен при незакрытых BLOCKER/CRITICAL/MAJOR замечаниях."))
         minor_open = [f for f in unresolved if f.get("severity") == "MINOR"]
-        accepted_risks = {f.get("finding_id") for f in findings if f.get("status") == "accepted_risk"}
         scoped_minor = {f.get("finding_id") for f in minor_open}
-        if accepted_risks and not _risk_acceptance_matches(context, accepted_risks):
-            issues.append(_issue("QA_ACCEPTED_RISK_UNVERIFIED", "findings", "Статус accepted_risk требует доверенной записи принятия риска с перечислением всех замечаний."))
         if scoped_minor and not _risk_acceptance_matches(context, scoped_minor):
             issues.append(_issue("QA_MINOR_POLICY_MISSING", "findings", "Открытые MINOR допускаются только при отдельном утверждении владельцем риска с указанием каждого finding_id."))
     if status == "CONDITIONAL_PASS":
