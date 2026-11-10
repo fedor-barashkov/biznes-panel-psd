@@ -1,0 +1,31 @@
+name: Windows build
+
+on:
+  push:
+    branches: [ "itd-product-bootstrap" ]
+  pull_request:
+    branches: [ "itd-product-bootstrap" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore ITD.sln
+      - name: Test
+        run: dotnet test ITD.sln --configuration Release --no-restore
+      - name: Build
+        run: dotnet build ITD.sln --configuration Release --no-restore
+      - name: Publish self-contained Windows x64
+        run: dotnet publish src/ITD.Desktop/ITD.Desktop.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/ITD-win-x64
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ITD-win-x64
+          path: artifacts/ITD-win-x64
