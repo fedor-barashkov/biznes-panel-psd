@@ -285,6 +285,25 @@ class QABusinessRulesTests(unittest.TestCase):
         }
         self.assertEqual([], validate_qa_review_result(self.doc, self.context))
 
+    def test_conditional_pass_rejects_unverified_accepted_risk(self):
+        self.doc["status"] = "CONDITIONAL_PASS"
+        self.doc["findings"].append({
+            "finding_id": "F-7", "severity": "MINOR",
+            "description": "Риск отмечен принятым без решения",
+            "status": "accepted_risk", "evidence_refs": ["EV-7"],
+        })
+        self.doc["findings"].append({
+            "finding_id": "F-8", "severity": "MAJOR",
+            "description": "Открытый риск",
+            "status": "open", "evidence_refs": ["EV-8"],
+        })
+        self.context["risk_acceptance"] = {
+            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-3",
+            "finding_ids": ["F-8"],
+        }
+        self.assertIn("QA_ACCEPTED_RISK_UNVERIFIED",
+                      {x["code"] for x in validate_qa_review_result(self.doc, self.context)})
+
     def test_qa_passed_rejects_unverified_accepted_risk(self):
         self.doc["findings"].append({
             "finding_id": "F-5", "severity": "MINOR",
