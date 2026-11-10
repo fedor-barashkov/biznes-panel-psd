@@ -1,0 +1,54 @@
+{
+  "result_version": "0.1",
+  "project_id": "PRJ-001",
+  "object_id": "OBJ-001",
+  "document_id": "ACT-001",
+  "document_type": "АОСР",
+  "template": {
+    "template_id": "USER-AOSR-TEMPLATE",
+    "revision": "1.0",
+    "normative_basis": "Уточняется по проекту"
+  },
+  "document_status": "draft",
+  "fields": [
+    {
+      "field_id": "work_name",
+      "value": "Условное наименование работ",
+      "value_status": "extracted_unverified",
+      "source_refs": [
+        "DOC-001"
+      ],
+      "confidence": 0.93
+    }
+  ],
+  "source_documents": [
+    {
+      "source_id": "DOC-001",
+      "revision_id": "R1",
+      "document_code": "РД-01",
+      "locator": {
+        "page": 3
+      },
+      "relation": "extracted_from"
+    }
+  ],
+  "related_document_ids": [
+    "SCHEME-001"
+  ],
+  "appendices": [
+    {
+      "appendix_type": "исполнительная схема",
+      "document_ids": [
+        "SCHEME-001"
+      ],
+      "status": "attached"
+    }
+  ],
+  "validation": {
+    "passed": false,
+    "findings": [
+      "Требуется подтверждение ответственного представителя"
+    ]
+  },
+  "approval_required": true
+}
