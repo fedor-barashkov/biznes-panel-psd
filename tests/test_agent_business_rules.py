@@ -164,6 +164,35 @@ class QABusinessRulesTests(unittest.TestCase):
         self.assertIn("QA_NOT_INDEPENDENT",
                       {x["code"] for x in validate_qa_review_result(self.doc, self.context)})
 
+    def test_conditional_pass_requires_every_open_risk_to_be_in_decision(self):
+        self.doc["status"] = "CONDITIONAL_PASS"
+        self.doc["findings"].append({
+            "finding_id": "F-3", "severity": "MAJOR",
+            "description": "Риск не включён в решение",
+            "status": "open", "evidence_refs": ["EV-3"],
+        })
+        self.context["risk_acceptance"] = {
+            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-1",
+            "finding_ids": ["F-2"],
+        }
+        self.assertIn("QA_RISK_SCOPE_MISMATCH",
+                      {x["code"] for x in validate_qa_review_result(self.doc, self.context)})
+
+    def test_conditional_pass_is_blocked_for_unverified_checks(self):
+        self.doc["status"] = "CONDITIONAL_PASS"
+        self.doc["unverified_items"] = ["Непроверенный пункт"]
+        self.doc["findings"].append({
+            "finding_id": "F-2", "severity": "MAJOR",
+            "description": "Остаточный риск",
+            "status": "open", "evidence_refs": ["EV-2"],
+        })
+        self.context["risk_acceptance"] = {
+            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-1",
+            "finding_ids": ["F-2"],
+        }
+        self.assertIn("QA_CONDITIONAL_NOT_VERIFIED",
+                      {x["code"] for x in validate_qa_review_result(self.doc, self.context)})
+
     def test_conditional_pass_requires_risk_owner_and_decision(self):
         self.doc["status"] = "CONDITIONAL_PASS"
         self.doc["findings"].append({
