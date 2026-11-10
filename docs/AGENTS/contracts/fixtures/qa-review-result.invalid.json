@@ -1,0 +1,28 @@
+{
+  "result_version": "0.1",
+  "review_id": "QA-001",
+  "subject": {
+    "artifact_id": "BOQ-001",
+    "artifact_version": "1",
+    "artifact_type": "bill_of_quantities",
+    "author_agent_id": "construction.gip"
+  },
+  "criteria_version": "QA-criteria-0.1",
+  "status": "PASSED",
+  "checks": [
+    {
+      "check_id": "QA-SRC-001",
+      "requirement_id": "GIP-EVIDENCE-001",
+      "result": "passed",
+      "evidence_refs": [
+        "DOC-RD-001"
+      ],
+      "method": "Проверка ссылок на листы"
+    }
+  ],
+  "findings": [],
+  "unverified_items": [
+    "Не выполнена независимая проверка расчётов"
+  ],
+  "reviewed_at": "2026-11-10T10:00:00+01:00"
+}
