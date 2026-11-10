@@ -66,6 +66,12 @@ class GIPBusinessRulesTests(unittest.TestCase):
         codes = {x["code"] for x in validate_gip_result(doc)}
         self.assertIn("GIP_EVIDENCE_SOURCE_UNKNOWN", codes)
 
+    def test_evidence_without_locator_is_rejected(self):
+        doc = copy.deepcopy(self.doc)
+        doc["positions"][0]["evidence"][0]["locator"] = {}
+        self.assertIn("GIP_EVIDENCE_LOCATOR_EMPTY",
+                      {x["code"] for x in validate_gip_result(doc)})
+
     def test_calculated_quantity_requires_formula_and_calculation_evidence(self):
         doc = copy.deepcopy(self.doc)
         p = doc["positions"][0]
@@ -113,6 +119,19 @@ class PTOBusinessRulesTests(unittest.TestCase):
     def test_release_is_blocked_when_template_not_in_trusted_registry(self):
         self._make_release_ready()
         self.context["template_registry"]["active"] = False
+        self.assertIn("PTO_TEMPLATE_NOT_AUTHORIZED",
+                      {x["code"] for x in validate_pto_result(self.doc, self.context)})
+
+    def test_release_is_blocked_when_required_appendix_is_missing(self):
+        self._make_release_ready()
+        self.doc["appendices"][0]["status"] = "missing"
+        self.assertIn("PTO_RELEASE_APPENDIX_INCOMPLETE",
+                      {x["code"] for x in validate_pto_result(self.doc, self.context)})
+
+    def test_agent_payload_cannot_supply_its_own_template_authority(self):
+        self._make_release_ready()
+        self.context.pop("template_registry")
+        self.doc["template"]["active"] = True
         self.assertIn("PTO_TEMPLATE_NOT_AUTHORIZED",
                       {x["code"] for x in validate_pto_result(self.doc, self.context)})
 
@@ -187,6 +206,18 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
         codes = {x["code"] for x in validate_estimator_result(self.doc, self.context)}
         self.assertIn("ESTIMATOR_PRESERVATION_SCOPE_INCOMPLETE", codes)
 
+    def test_export_requires_separate_export_authorization(self):
+        self._make_approved()
+        self.doc["estimate_status"] = "exported"
+        self.context["round_trip_check"] = {"performed": True, "result": "identical"}
+        self.context["export_authorization"] = {
+            "authorized": True, "artifact_id": "EST-001", "revision": "other",
+            "operation": "grand_smeta.export", "actor_id": "user-3",
+            "decision_id": "EXPORT-1",
+        }
+        self.assertIn("ESTIMATOR_EXPORT_NOT_AUTHORIZED",
+                      {x["code"] for x in validate_estimator_result(self.doc, self.context)})
+
 
 class QABusinessRulesTests(unittest.TestCase):
     def setUp(self):
@@ -251,6 +282,27 @@ class QABusinessRulesTests(unittest.TestCase):
         self.context["risk_acceptance"] = {
             "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-1",
             "finding_ids": ["F-2"],
+        }
+        self.assertEqual([], validate_qa_review_result(self.doc, self.context))
+
+    def test_qa_passed_rejects_unverified_accepted_risk(self):
+        self.doc["findings"].append({
+            "finding_id": "F-5", "severity": "MINOR",
+            "description": "Риск без подтверждённого решения",
+            "status": "accepted_risk", "evidence_refs": ["EV-5"],
+        })
+        self.assertIn("QA_ACCEPTED_RISK_UNVERIFIED",
+                      {x["code"] for x in validate_qa_review_result(self.doc, self.context)})
+
+    def test_qa_passed_accepts_only_explicitly_scoped_minor_risk(self):
+        self.doc["findings"].append({
+            "finding_id": "F-6", "severity": "MINOR",
+            "description": "Открытое малозначительное замечание",
+            "status": "open", "evidence_refs": ["EV-6"],
+        })
+        self.context["risk_acceptance"] = {
+            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-2",
+            "finding_ids": ["F-6"],
         }
         self.assertEqual([], validate_qa_review_result(self.doc, self.context))
 
