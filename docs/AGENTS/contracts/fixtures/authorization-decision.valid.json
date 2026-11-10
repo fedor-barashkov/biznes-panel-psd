@@ -1,0 +1,31 @@
+{
+  "decision_id": "DEC-001",
+  "request_id": "REQ-001",
+  "actor": {
+    "actor_id": "user-001",
+    "actor_type": "human",
+    "role": "GIP",
+    "tenant_id": "TEN-01"
+  },
+  "action": "boq.approve",
+  "resource": {
+    "resource_type": "bill_of_quantities",
+    "resource_id": "BOQ-001",
+    "revision": 3,
+    "object_id": "OBJ-001"
+  },
+  "effect": "allow",
+  "scope": [
+    "project:PRJ-001",
+    "object:OBJ-001"
+  ],
+  "policy_version": "AUTHZ-0.1",
+  "issued_at": "2026-11-10T15:00:00Z",
+  "expires_at": "2026-11-10T15:05:00Z",
+  "nonce": "0123456789abcdef0123456789abcdef",
+  "reason_codes": [
+    "ROLE_ALLOWED",
+    "SCOPE_MATCH"
+  ],
+  "approval_record_id": "APR-001"
+}
