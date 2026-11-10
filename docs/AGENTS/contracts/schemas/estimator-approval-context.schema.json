@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/trusted-context/estimator/0.1",
+  "title": "Trusted estimator approval and export context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "target_status",
+    "boq_registry",
+    "estimate_revision"
+  ],
+  "properties": {
+    "target_status": {
+      "enum": [
+        "approved",
+        "exported"
+      ]
+    },
+    "estimate_revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "boq_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boq_id",
+        "revision",
+        "approval_status",
+        "authorized",
+        "position_ids"
+      ],
+      "properties": {
+        "boq_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "approval_status": {
+          "const": "approved_by_gip"
+        },
+        "authorized": {
+          "const": true
+        },
+        "position_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "approval_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approval_id",
+        "artifact_id",
+        "revision",
+        "decision",
+        "actor_id",
+        "actor_role",
+        "authorized"
+      ],
+      "properties": {
+        "approval_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "decision": {
+          "const": "approved"
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_role": {
+          "const": "ESTIMATOR_APPROVER"
+        },
+        "authorized": {
+          "const": true
+        }
+      }
+    },
+    "round_trip_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "performed",
+        "result"
+      ],
+      "properties": {
+        "performed": {
+          "const": true
+        },
+        "result": {
+          "const": "identical"
+        }
+      }
+    },
+    "export_authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorized",
+        "artifact_id",
+        "revision",
+        "operation",
+        "actor_id",
+        "decision_id"
+      ],
+      "properties": {
+        "authorized": {
+          "const": true
+        },
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operation": {
+          "const": "grand_smeta.export"
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "target_status": {
+            "const": "exported"
+          }
+        },
+        "required": [
+          "target_status"
+        ]
+      },
+      "then": {
+        "required": [
+          "approval_record",
+          "round_trip_check",
+          "export_authorization"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "target_status": {
+            "const": "approved"
+          }
+        },
+        "required": [
+          "target_status"
+        ]
+      },
+      "then": {
+        "required": [
+          "approval_record"
+        ]
+      }
+    }
+  ]
+}
