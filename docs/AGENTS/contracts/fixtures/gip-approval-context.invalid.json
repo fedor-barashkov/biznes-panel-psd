@@ -1,0 +1,11 @@
+{
+  "approval_record": {
+    "approval_id": "APR-GIP-001",
+    "artifact_id": "BOQ-001",
+    "revision": 2,
+    "decision": "approved",
+    "actor_id": "user-gip-1",
+    "actor_role": "GIP",
+    "authorized": false
+  }
+}
