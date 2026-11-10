@@ -179,8 +179,16 @@ def validate_estimator_result(doc: dict, context: dict | None = None) -> list[di
         round_trip = context.get("round_trip_check", {})
         if round_trip.get("performed") is not True or round_trip.get("result") != "identical":
             issues.append(_issue("ESTIMATOR_ROUND_TRIP_NOT_PASSED", "estimate_status", "Экспорт запрещён без успешного обратного сравнения без расхождений."))
-        if not _approval_matches(context, artifact_id=doc.get("estimate_id"), revision=context.get("estimate_revision"), role="ESTIMATOR_APPROVER"):
-            issues.append(_issue("ESTIMATOR_EXPORT_NOT_AUTHORIZED", "estimate_status", "Экспорт не подтверждён уполномоченным сметчиком/пользователем."))
+        export_auth = context.get("export_authorization", {})
+        if not (
+            export_auth.get("authorized") is True
+            and export_auth.get("artifact_id") == doc.get("estimate_id")
+            and export_auth.get("revision") == context.get("estimate_revision")
+            and export_auth.get("operation") == "grand_smeta.export"
+            and export_auth.get("actor_id")
+            and export_auth.get("decision_id")
+        ):
+            issues.append(_issue("ESTIMATOR_EXPORT_NOT_AUTHORIZED", "estimate_status", "Экспорт требует отдельного разрешения на grand_smeta.export для этой редакции сметы."))
     return issues
 
 
