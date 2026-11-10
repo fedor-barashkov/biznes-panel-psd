@@ -72,13 +72,14 @@ JSON Schema проверяет структуру, типы и обязател�
 
 Прототип ожидает следующие объекты контекста (точная форма должна быть закреплена отдельным API-контрактом runtime):
 
-- `approval_record`: `approval_id`, `artifact_id`, `revision`, `decision`, `actor_id`, `actor_role`, `authorized`.
+- `approval_record`: `approval_id`, `artifact_id`, `revision`, `decision`, `actor_id`, `actor_type=human`, `actor_role`, `authorized=true`.
+- `export_authorization`: `authorized=true`, `artifact_id`, `revision`, `operation=grand_smeta.export`, `actor_id`, `actor_type=human`, `decision_id`.
 - `template_registry`: `template_id`, `revision`, `active`.
 - `boq_registry`: `boq_id`, `revision`, `approval_status`, `authorized`, `position_ids` (состав утверждённой редакции ВОР).
 - `round_trip_check`: `performed`, `result`.
 - `export_authorization`: `authorized`, `artifact_id`, `revision`, `operation`, `actor_id`, `decision_id`.
 - `reviewer_agent_id`, `reviewer_independent`.
-- `risk_acceptance`: `approved`, `owner_id`, `decision_id`, `finding_ids` (все открытые MAJOR/MINOR, а также все findings со статусом `accepted_risk`, принимаемые решением).
+- `risk_acceptance`: `approved`, `owner_id`, `actor_id` (совпадает с owner_id), `actor_type=human`, `decision_id`, `finding_ids` (все открытые MAJOR/MINOR, а также все findings со статусом `accepted_risk`, принимаемые решением).
 - `document_revision`, `estimate_revision`.
 
 Структуры контекста формализованы схемами `gip-approval-context.schema.json`, `pto-release-context.schema.json`, `estimator-approval-context.schema.json` и `qa-review-context.schema.json`; положительные/отрицательные fixtures находятся в `fixtures/`. Это проверка формы, а не готовая модель аутентификации: контекст должен создаваться только доверенным компонентом после проверки полномочий и связываться с неизменяемыми записями аудита.
