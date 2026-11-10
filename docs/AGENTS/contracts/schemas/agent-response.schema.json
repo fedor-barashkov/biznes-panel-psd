@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/contracts/agent-response/0.1",
+  "title": "Construction AI Agent Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "request_id",
+    "agent_id",
+    "agent_version",
+    "status",
+    "result",
+    "evidence",
+    "assumptions",
+    "uncertainties",
+    "warnings",
+    "proposed_actions",
+    "requires_human_approval"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_id": {
+      "enum": [
+        "construction.gip",
+        "construction.pto",
+        "construction.estimator",
+        "construction.qa"
+      ]
+    },
+    "agent_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "needs_review",
+        "needs_input",
+        "blocked",
+        "failed",
+        "partial"
+      ]
+    },
+    "result": {
+      "type": [
+        "object",
+        "array",
+        "string",
+        "number",
+        "boolean",
+        "null"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_document_id",
+          "verification"
+        ],
+        "properties": {
+          "source_document_id": {
+            "type": "string"
+          },
+          "revision_id": {
+            "type": "string"
+          },
+          "locator": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "extraction_method": {
+            "enum": [
+              "manual",
+              "text_extraction",
+              "ocr",
+              "calculation",
+              "model_inference",
+              "external_lookup",
+              "other"
+            ]
+          },
+          "verification": {
+            "enum": [
+              "confirmed",
+              "unconfirmed",
+              "conflicted",
+              "not_applicable"
+            ]
+          },
+          "value_origin": {
+            "enum": [
+              "extracted",
+              "calculated",
+              "interpreted",
+              "user_supplied"
+            ]
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "proposed_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action_id",
+          "operation",
+          "target",
+          "requires_approval"
+        ],
+        "properties": {
+          "action_id": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "requires_approval": {
+            "type": "boolean"
+          },
+          "permission_required": {
+            "enum": [
+              "read",
+              "analyze",
+              "draft",
+              "modify",
+              "release",
+              "send",
+              "sign",
+              "accept"
+            ]
+          },
+          "payload": {
+            "type": "object"
+          },
+          "idempotency_key": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "requires_human_approval": {
+      "type": "boolean"
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "INVALID_REQUEST",
+            "UNSUPPORTED_CONTRACT_VERSION",
+            "UNKNOWN_AGENT",
+            "PERMISSION_DENIED",
+            "SOURCE_NOT_FOUND",
+            "SOURCE_AMBIGUOUS",
+            "SOURCE_CONFLICT",
+            "SCHEMA_VALIDATION_FAILED",
+            "APPROVAL_REQUIRED",
+            "IDEMPOTENCY_CONFLICT",
+            "CLIENT_ADAPTER_ERROR",
+            "MODEL_PROVIDER_ERROR",
+            "TIMEOUT",
+            "INTERNAL_ERROR"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "details": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}
