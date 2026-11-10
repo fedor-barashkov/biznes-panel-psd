@@ -146,6 +146,8 @@ def validate_estimator_result(doc: dict, context: dict | None = None) -> list[di
         for index, position in enumerate(doc.get("positions", [])):
             if position.get("mapping_status") != "matched":
                 issues.append(_issue("ESTIMATOR_MAPPING_UNRESOLVED", f"positions[{index}]", "Все позиции должны иметь подтверждённое сопоставление нормы."))
+        if not _approval_matches(context, artifact_id=doc.get("estimate_id"), revision=context.get("estimate_revision"), role="ESTIMATOR_APPROVER"):
+            issues.append(_issue("ESTIMATOR_APPROVAL_NOT_AUTHORIZED", "estimate_status", "Утверждение сметы не подтверждено доверенной записью уполномоченного сметчика."))
     if doc.get("estimate_status") == "exported":
         round_trip = context.get("round_trip_check", {})
         if round_trip.get("performed") is not True or round_trip.get("result") != "identical":
@@ -161,7 +163,7 @@ def validate_qa_review_result(doc: dict, context: dict | None = None) -> list[di
     subject = doc.get("subject", {})
     author = subject.get("author_agent_id")
     reviewer = context.get("reviewer_agent_id")
-    independent = context.get("reviewer_independent") is True and reviewer and reviewer != author
+    independent = bool(author and reviewer and context.get("reviewer_independent") is True and reviewer != author)
     status = doc.get("status")
     findings = doc.get("findings", [])
     unresolved = [f for f in findings if f.get("status") not in {"closed", "accepted_risk"}]
@@ -173,6 +175,8 @@ def validate_qa_review_result(doc: dict, context: dict | None = None) -> list[di
             issues.append(_issue("QA_NOT_INDEPENDENT", "status", "QA_PASSED требует независимого проверяющего, отличного от автора результата."))
         if any(c.get("result") not in {"passed", "not_applicable"} for c in doc.get("checks", [])):
             issues.append(_issue("QA_REQUIRED_CHECKS_INCOMPLETE", "checks", "QA_PASSED невозможен при пропущенных, заблокированных или проваленных проверках."))
+        if any(c.get("result") == "passed" and not c.get("evidence_refs") for c in doc.get("checks", [])):
+            issues.append(_issue("QA_CHECK_WITHOUT_EVIDENCE", "checks", "Каждая пройденная проверка должна иметь ссылку на доказательство."))
         if doc.get("unverified_items"):
             issues.append(_issue("QA_UNVERIFIED_ITEMS_REMAIN", "unverified_items", "QA_PASSED невозможен при непроверенных пунктах."))
         if severe or major:
