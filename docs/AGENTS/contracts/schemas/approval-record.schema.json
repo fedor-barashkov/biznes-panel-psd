@@ -11,6 +11,7 @@
     "target",
     "decision",
     "decided_by",
+    "actor_type",
     "decided_at",
     "policy_version"
   ],
@@ -70,6 +71,9 @@
       "items": {
         "type": "string"
       }
+    },
+    "actor_type": {
+      "const": "human"
     }
   }
 }
