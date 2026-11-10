@@ -1,0 +1,17 @@
+{
+  "event_id": "EVT-002",
+  "occurred_at": "yesterday",
+  "request_id": "REQ-002",
+  "actor": {
+    "actor_id": "agent.pto",
+    "actor_type": "agent"
+  },
+  "action": "itd.release",
+  "resource": {
+    "resource_type": "itd_document",
+    "resource_id": "AOSR-001"
+  },
+  "outcome": "committed",
+  "policy_version": "AUTHZ-0.1",
+  "event_hash": "not-a-hash"
+}
