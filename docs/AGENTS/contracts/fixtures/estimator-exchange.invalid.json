@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.1",
+  "exchange_id": "EX-002",
+  "direction": "to_grand_smeta",
+  "source_boq": {
+    "artifact_id": "BOQ-002",
+    "revision": "1",
+    "approval_status": "draft"
+  },
+  "normative_basis": {
+    "methodology": "421/пр",
+    "edition": "x",
+    "database_id": "x"
+  },
+  "grand_smeta": {
+    "product": "ГРАНД-Смета",
+    "version": "2026",
+    "exchange_format": "xml"
+  },
+  "items": [
+    {
+      "estimate_item_id": "E",
+      "source_boq_item_id": "B",
+      "norm_code": "N",
+      "norm_name": "N",
+      "unit": "м3",
+      "quantity": -2,
+      "preservation_status": "loss_detected"
+    }
+  ],
+  "mapping_changes": [],
+  "exchange_status": "validated"
+}
