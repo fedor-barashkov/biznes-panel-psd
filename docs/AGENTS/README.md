@@ -34,3 +34,4 @@
 ## Контракты данных
 
 - [Машинно-читаемые контракты](contracts/README.md) — общие и ролевые JSON Schema Draft 2020-12 версии 0.1, тестовые примеры и автоматическая проверка через GitHub Actions.
+- [Бизнес-правила](contracts/BUSINESS_RULES_v0.1.md) — межполевые ограничения и доверенные gate-переходы; прототип валидатора и unit-тесты находятся в `scripts/agent_business_rules.py` и `tests/test_agent_business_rules.py`.
