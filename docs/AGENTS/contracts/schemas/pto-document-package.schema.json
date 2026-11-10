@@ -1,0 +1,310 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/roles/pto-document-package/0.1",
+  "title": "Construction PTO Executive Documentation Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "object_id",
+    "document_id",
+    "document_type",
+    "template",
+    "document_status",
+    "fields",
+    "attachments",
+    "source_document_ids"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "object_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subobject_id": {
+      "type": "string"
+    },
+    "document_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "document_type": {
+      "enum": [
+        "AOSR",
+        "executive_diagram",
+        "setting_out_act",
+        "general_work_log",
+        "special_journal",
+        "test_protocol",
+        "quality_document_register",
+        "other"
+      ]
+    },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "template_id",
+        "template_version",
+        "template_hash"
+      ],
+      "properties": {
+        "template_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "template_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "template_hash": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "normative_basis": {
+          "type": "string"
+        }
+      }
+    },
+    "document_status": {
+      "enum": [
+        "draft",
+        "in_review",
+        "needs_input",
+        "approved",
+        "released",
+        "archived"
+      ]
+    },
+    "work_period": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "completion_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field_id",
+          "value_status",
+          "source_refs"
+        ],
+        "properties": {
+          "field_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "null"
+            ]
+          },
+          "value_status": {
+            "enum": [
+              "populated",
+              "missing",
+              "conflict",
+              "not_applicable"
+            ]
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/sourceRef"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "review_note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "attachment_id",
+          "attachment_type",
+          "status"
+        ],
+        "properties": {
+          "attachment_id": {
+            "type": "string"
+          },
+          "attachment_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "document_id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "attached",
+              "required_missing",
+              "not_required",
+              "pending_review"
+            ]
+          },
+          "source_ref": {
+            "$ref": "#/$defs/sourceRef"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "source_document_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "related_document_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approver_id",
+        "decision",
+        "decided_at"
+      ],
+      "properties": {
+        "approver_id": {
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            "rejected",
+            "returned_for_revision"
+          ]
+        },
+        "decided_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "comment": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "document_status": {
+            "enum": [
+              "approved",
+              "released"
+            ]
+          }
+        },
+        "required": [
+          "document_status"
+        ]
+      },
+      "then": {
+        "required": [
+          "approval"
+        ],
+        "properties": {
+          "approval": {
+            "properties": {
+              "decision": {
+                "const": "approved"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sheet": {
+          "type": "string"
+        },
+        "cell": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string"
+        },
+        "table": {
+          "type": "string"
+        },
+        "row": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "element_id": {
+          "type": "string"
+        }
+      },
+      "minProperties": 1
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "locator"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string"
+        },
+        "revision_id": {
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/locator"
+        },
+        "excerpt": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      }
+    }
+  }
+}
