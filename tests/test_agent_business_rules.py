@@ -172,7 +172,8 @@ class QABusinessRulesTests(unittest.TestCase):
             "status": "open", "evidence_refs": ["EV-2"],
         })
         self.context["risk_acceptance"] = {
-            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-1"
+            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-1",
+            "finding_ids": ["F-2"],
         }
         self.assertEqual([], validate_qa_review_result(self.doc, self.context))
 
