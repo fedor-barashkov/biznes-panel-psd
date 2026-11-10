@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/contracts/task-envelope/0.1",
+  "title": "Construction AI Task Envelope",
+  "description": "Vendor-neutral task request envelope for construction agents.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "request_id",
+    "idempotency_key",
+    "agent_id",
+    "task_type",
+    "locale",
+    "context",
+    "inputs",
+    "available_tools",
+    "approval_policy",
+    "expected_output_schema"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "agent_id": {
+      "enum": [
+        "construction.gip",
+        "construction.pto",
+        "construction.estimator",
+        "construction.qa"
+      ]
+    },
+    "task_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "locale": {
+      "type": "string",
+      "default": "ru-RU"
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "client_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "object_id": {
+          "type": "string"
+        },
+        "subobject_id": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/input"
+      },
+      "maxItems": 500
+    },
+    "available_tools": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/toolGrant"
+      },
+      "maxItems": 200
+    },
+    "approval_policy": {
+      "$ref": "#/$defs/approvalPolicy"
+    },
+    "expected_output_schema": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*/[0-9]+\\.[0-9]+$"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "null"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sheet": {
+          "type": "string"
+        },
+        "cell": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string"
+        },
+        "table": {
+          "type": "string"
+        },
+        "row": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "element_id": {
+          "type": "string"
+        },
+        "fragment": {
+          "type": "string"
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_id",
+        "kind"
+      ],
+      "properties": {
+        "input_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "document_reference",
+            "file_reference",
+            "structured_data",
+            "text",
+            "artifact_reference"
+          ]
+        },
+        "document_id": {
+          "type": "string"
+        },
+        "revision_id": {
+          "type": "string"
+        },
+        "artifact_id": {
+          "type": "string"
+        },
+        "media_type": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri"
+        },
+        "locator": {
+          "$ref": "#/$defs/locator"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "toolGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_id",
+        "scope",
+        "permissions"
+      ],
+      "properties": {
+        "tool_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "read",
+              "analyze",
+              "draft",
+              "modify",
+              "release",
+              "send",
+              "sign",
+              "accept"
+            ]
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "approvalPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "draft_write",
+        "external_send",
+        "document_release",
+        "acceptance_status_change"
+      ],
+      "properties": {
+        "draft_write": {
+          "enum": [
+            "allow",
+            "confirm",
+            "deny"
+          ]
+        },
+        "external_send": {
+          "enum": [
+            "confirm",
+            "deny"
+          ]
+        },
+        "document_release": {
+          "enum": [
+            "confirm",
+            "deny"
+          ]
+        },
+        "acceptance_status_change": {
+          "enum": [
+            "confirm",
+            "deny"
+          ]
+        },
+        "signing": {
+          "enum": [
+            "confirm",
+            "deny"
+          ]
+        }
+      }
+    }
+  }
+}
