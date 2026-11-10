@@ -6,6 +6,7 @@
     "decision": "approved",
     "actor_id": "user-gip-1",
     "actor_role": "GIP",
-    "authorized": false
+    "authorized": false,
+    "actor_type": "human"
   }
 }
