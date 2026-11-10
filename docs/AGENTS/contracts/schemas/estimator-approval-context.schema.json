@@ -65,6 +65,7 @@
         "revision",
         "decision",
         "actor_id",
+        "actor_type",
         "actor_role",
         "authorized"
       ],
@@ -95,6 +96,9 @@
         },
         "authorized": {
           "const": true
+        },
+        "actor_type": {
+          "const": "human"
         }
       }
     },
@@ -122,6 +126,7 @@
         "artifact_id",
         "revision",
         "operation",
+        "actor_type",
         "actor_id",
         "decision_id"
       ],
@@ -147,6 +152,9 @@
         "decision_id": {
           "type": "string",
           "minLength": 1
+        },
+        "actor_type": {
+          "const": "human"
         }
       }
     }
