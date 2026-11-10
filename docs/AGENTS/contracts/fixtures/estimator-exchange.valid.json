@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1",
+  "exchange_id": "EX-001",
+  "direction": "to_grand_smeta",
+  "source_boq": {
+    "artifact_id": "BOQ-001",
+    "revision": "2",
+    "approval_status": "approved"
+  },
+  "normative_basis": {
+    "methodology": "421/пр",
+    "edition": "проверенная редакция",
+    "database_id": "REG-BASE-01",
+    "region": "регион уточняется"
+  },
+  "grand_smeta": {
+    "product": "ГРАНД-Смета",
+    "version": "2026",
+    "exchange_format": "поддерживаемый формат"
+  },
+  "items": [
+    {
+      "estimate_item_id": "EST-01",
+      "source_boq_item_id": "BOQ-01",
+      "norm_code": "ГЭСН-01-01-001",
+      "norm_name": "Наименование нормы — пример",
+      "unit": "100 м³",
+      "quantity": 0.125,
+      "preservation_status": "exact"
+    }
+  ],
+  "mapping_changes": [],
+  "exchange_status": "ready_for_review",
+  "draft_only": false
+}
