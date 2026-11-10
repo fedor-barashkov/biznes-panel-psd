@@ -45,6 +45,7 @@
         "revision",
         "decision",
         "actor_id",
+        "actor_type",
         "actor_role",
         "authorized"
       ],
@@ -75,6 +76,9 @@
         },
         "authorized": {
           "const": true
+        },
+        "actor_type": {
+          "const": "human"
         }
       }
     }
