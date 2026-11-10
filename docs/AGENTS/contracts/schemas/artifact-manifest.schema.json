@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/contracts/artifact-manifest/0.1",
+  "title": "Construction AI Artifact Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "artifact_id",
+    "artifact_type",
+    "name",
+    "media_type",
+    "created_at",
+    "created_by",
+    "content_hash",
+    "provenance",
+    "lifecycle_status"
+  ],
+  "properties": {
+    "manifest_version": {
+      "const": "0.1"
+    },
+    "artifact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact_type": {
+      "enum": [
+        "document_draft",
+        "document_final",
+        "calculation",
+        "bill_of_quantities",
+        "estimate",
+        "executive_diagram",
+        "qa_report",
+        "test_report",
+        "data_export",
+        "other"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "media_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "source_revision_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "provenance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "relation"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision_id": {
+            "type": "string"
+          },
+          "relation": {
+            "enum": [
+              "extracted_from",
+              "calculated_from",
+              "interpreted_from",
+              "derived_from",
+              "reviewed_against",
+              "supersedes"
+            ]
+          },
+          "locator": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "lifecycle_status": {
+      "enum": [
+        "draft",
+        "under_review",
+        "approved_by_user",
+        "released",
+        "superseded",
+        "archived"
+      ]
+    },
+    "supersedes_artifact_id": {
+      "type": "string"
+    },
+    "schema_id": {
+      "type": "string"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
