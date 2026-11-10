@@ -1,0 +1,26 @@
+{
+  "target_status": "exported",
+  "estimate_revision": "3",
+  "boq_registry": {
+    "boq_id": "BOQ-001",
+    "revision": 2,
+    "approval_status": "approved_by_gip",
+    "authorized": true,
+    "position_ids": [
+      "BOQ-POS-001"
+    ]
+  },
+  "approval_record": {
+    "approval_id": "APR-EST-001",
+    "artifact_id": "EST-001",
+    "revision": "3",
+    "decision": "approved",
+    "actor_id": "user-est-1",
+    "actor_role": "ESTIMATOR_APPROVER",
+    "authorized": true
+  },
+  "round_trip_check": {
+    "performed": true,
+    "result": "differences"
+  }
+}
