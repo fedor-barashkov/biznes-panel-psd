@@ -1,0 +1,44 @@
+{
+  "result_version": "0.1",
+  "project_id": "PRJ-001",
+  "object_id": "OBJ-001",
+  "estimate_id": "EST-001",
+  "source_boq": {
+    "boq_id": "BOQ-001",
+    "revision": 2,
+    "approval_status": "draft"
+  },
+  "normative_base": {
+    "name": "Условная нормативная база",
+    "edition": "2026",
+    "region": "Регион-1",
+    "price_level_date": "2026-10-01"
+  },
+  "estimate_status": "draft",
+  "positions": [
+    {
+      "estimate_position_id": "EST-POS-001",
+      "source_boq_position_id": "BOQ-POS-001",
+      "norm_code": "TEST-01-001",
+      "norm_name": "Условная норма",
+      "unit": "м3",
+      "quantity": 10,
+      "mapping_status": "requires_human_review",
+      "justification": "Требуется проверка состава нормы"
+    }
+  ],
+  "data_preservation_check": {
+    "checked_fields": [
+      "position_code",
+      "norm_code",
+      "norm_name",
+      "unit",
+      "quantity"
+    ],
+    "losses_detected": [],
+    "passed": true
+  },
+  "open_questions": [
+    "Подтвердить выбранную норму"
+  ]
+}
