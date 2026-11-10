@@ -1,0 +1,46 @@
+{
+  "result_version": "0.1",
+  "project_id": "PRJ-001",
+  "object_id": "OBJ-001",
+  "boq_id": "BOQ-001",
+  "revision": 1,
+  "approval_status": "approved",
+  "source_documents": [
+    {
+      "source_id": "DOC-RD-001",
+      "revision_id": "REV-2",
+      "document_code": "КЖ-01",
+      "locator": {
+        "sheet": "Лист 5",
+        "fragment": "Спецификация"
+      },
+      "relation": "extracted_from",
+      "excerpt": "Пример исходных данных"
+    }
+  ],
+  "positions": [
+    {
+      "position_id": "BOQ-001-001",
+      "work_name": "Монтаж условной конструкции",
+      "unit": "шт.",
+      "quantity": 12,
+      "quantity_origin": "extracted",
+      "evidence": [
+        {
+          "source_id": "DOC-RD-001",
+          "revision_id": "REV-2",
+          "document_code": "КЖ-01",
+          "locator": {
+            "sheet": "Лист 5"
+          },
+          "relation": "extracted_from"
+        }
+      ],
+      "verification_status": "needs_review"
+    }
+  ],
+  "issues": [],
+  "open_questions": [
+    "Подтвердить применимость редакции РД"
+  ]
+}
