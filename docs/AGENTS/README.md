@@ -11,6 +11,7 @@
 - [Архитектура Runtime MVP](RUNTIME_ARCHITECTURE_v0.1.md) — компоненты исполняемого ядра, границы доверия, локальный Windows/offline-first режим, этапы MVP и критерии приёмки.
 - [План реализации Runtime MVP](MVP_IMPLEMENTATION_PLAN_v0.1.md) — work packages P0–P5, зависимости, технические spike, gates и Definition of Done.
 - [Предварительные технические выводы P0](P0_TECHNICAL_FINDINGS_v0.1.md) — сравнение .NET 10, Windows hosting, IPC, SQLite/WAL, backup и упаковки; предварительные ADR и следующий spike.
+- [SP-02: безопасный локальный IPC](SP-02_LOCAL_IPC_SPIKE_SPEC_v0.1.md) — спецификация прототипа Named Pipes, Windows ACL, проверки principal и 16 негативных/позитивных тестов.
 - [Граница доверия и авторизация](TRUST_BOUNDARY_SPEC_v0.1.md) — human-only подтверждения, PDP/PEP/PIP, replay protection и append-only аудит.
 - [Архитектура экосистемы](../ECOSYSTEM/ARCHITECTURE_v0.1.md) — границы независимых продуктов и репозиториев.
 
