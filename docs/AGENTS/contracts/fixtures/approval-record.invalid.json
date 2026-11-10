@@ -1,0 +1,11 @@
+{
+  "approval_id": "APR-002",
+  "request_id": "REQ-002",
+  "action_id": "ACTION-002",
+  "target": "AOSR-001@1",
+  "decision": "approved",
+  "decided_by": "agent.pto",
+  "actor_type": "service",
+  "decided_at": "2026-11-10T14:00:00Z",
+  "policy_version": "AUTHZ-0.1"
+}
