@@ -13,6 +13,8 @@ on:
     paths:
       - "docs/AGENTS/contracts/**"
       - "scripts/validate_agent_contracts.py"
+      - "scripts/agent_business_rules.py"
+      - "tests/test_agent_business_rules.py"
       - ".github/workflows/validate-agent-contracts.yml"
   workflow_dispatch:
 
