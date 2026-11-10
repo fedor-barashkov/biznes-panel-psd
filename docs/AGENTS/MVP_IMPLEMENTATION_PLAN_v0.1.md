@@ -209,3 +209,10 @@ P0 завершён, когда все spike имеют ADR, альтернат�
 Предварительное кабинетное сравнение вариантов зафиксировано в [P0_TECHNICAL_FINDINGS_v0.1.md](P0_TECHNICAL_FINDINGS_v0.1.md). Текущие кандидаты: .NET 10 LTS; отдельный пользовательский процесс на Generic Host; Named Pipes с явным ACL для локальных Windows-клиентов; SQLite/WAL на локальном диске и отдельное файловое хранилище; self-contained win-x64 publish как первый формат проверки. WPF остаётся клиентом ИТД, не частью Runtime Core.
 
 Эти выводы не закрывают P0. В первую очередь требуется SP-02: воспроизводимый Windows-прототип Named Pipes с ACL, проверкой principal, отказом неавторизованному клиенту и автоматическими Windows integration tests. Подробная спецификация эксперимента, матрица IPC-001—IPC-016 и критерии PASS/BLOCKED приведены в [SP-02_LOCAL_IPC_SPIKE_SPEC_v0.1.md](SP-02_LOCAL_IPC_SPIKE_SPEC_v0.1.md). Затем SP-01/03/04 и остальные spike. Удалённый ChatGPT/Codex не получает прямого доступа к локальному IPC; для него потребуется отдельный безопасный relay либо локальный клиентский адаптер, если конкретный клиент поддерживает такой режим.
+
+
+## 14. Уточнение SP-02 по результатам проверки API .NET 10
+
+Создан документ [SP-02_DOTNET_IMPLEMENTATION_NOTES_v0.1.md](SP-02_DOTNET_IMPLEMENTATION_NOTES_v0.1.md). Проверены публичные API для ACL, impersonation, асинхронного подключения и обёртки native pipe handle. Выявлено, что .NET 10 PipeOptions не предоставляет отдельного PIPE_REJECT_REMOTE_CLIENTS. Поэтому SP-02 сравнивает managed ACL с запретом NETWORK SID и Win32 CreateNamedPipeW с PIPE_REJECT_REMOTE_CLIENTS; remote rejection нельзя считать подтверждённым до отдельного теста на Windows VM. Также зафиксирована особенность: CurrentUserOnly заставляет NamedPipeServerStreamAcl.Create игнорировать переданный PipeSecurity.
+
+**Статус:** подготовлены технические заметки и уточнена методика. Код не написан; IPC-001—IPC-016 не запускались. P0 остаётся открытым.
