@@ -17,7 +17,8 @@
     "decision": "approved",
     "actor_id": "user-est-1",
     "actor_role": "ESTIMATOR_APPROVER",
-    "authorized": true
+    "authorized": true,
+    "actor_type": "human"
   },
   "round_trip_check": {
     "performed": true,
@@ -29,6 +30,7 @@
     "revision": "3",
     "operation": "grand_smeta.export",
     "actor_id": "user-est-1",
-    "decision_id": "EXP-001"
+    "decision_id": "EXP-001",
+    "actor_type": "human"
   }
 }
