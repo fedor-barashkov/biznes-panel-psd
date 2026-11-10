@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1",
+  "run_id": "QA-RUN-002",
+  "target": {
+    "artifact_id": "A",
+    "artifact_version": "1",
+    "author_id": "pto"
+  },
+  "criteria_version": "1",
+  "reviewer_id": "qa",
+  "independence": "independent",
+  "checks": [],
+  "findings": [],
+  "verdict": "qa_passed",
+  "created_at": "not-a-date"
+}
