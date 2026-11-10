@@ -27,6 +27,7 @@ def _approval_matches(context: dict, *, artifact_id: str, revision: Any, role: s
         and record.get("artifact_id") == artifact_id
         and record.get("revision") == revision
         and record.get("actor_role") == role
+        and record.get("actor_type") == "human"
         and record.get("authorized") is True
         and record.get("actor_id")
         and record.get("approval_id")
@@ -41,6 +42,8 @@ def _risk_acceptance_matches(context: dict, finding_ids: set[str]) -> bool:
         isinstance(risk, dict)
         and risk.get("approved") is True
         and risk.get("owner_id")
+        and risk.get("actor_id") == risk.get("owner_id")
+        and risk.get("actor_type") == "human"
         and risk.get("decision_id")
         and finding_ids
         and finding_ids.issubset(accepted)
@@ -185,6 +188,7 @@ def validate_estimator_result(doc: dict, context: dict | None = None) -> list[di
             and export_auth.get("artifact_id") == doc.get("estimate_id")
             and export_auth.get("revision") == context.get("estimate_revision")
             and export_auth.get("operation") == "grand_smeta.export"
+            and export_auth.get("actor_type") == "human"
             and export_auth.get("actor_id")
             and export_auth.get("decision_id")
         ):
