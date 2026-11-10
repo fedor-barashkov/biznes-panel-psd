@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/contracts/qa-report/0.1",
+  "title": "Construction AI QA Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_id",
+    "request_id",
+    "subject",
+    "criteria_version",
+    "qa_agent_version",
+    "status",
+    "checks",
+    "findings",
+    "unverified_items",
+    "created_at"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "artifact_version"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string"
+        },
+        "artifact_version": {
+          "type": "string"
+        },
+        "author_agent_id": {
+          "type": "string"
+        },
+        "author_agent_version": {
+          "type": "string"
+        }
+      }
+    },
+    "criteria_version": {
+      "type": "string"
+    },
+    "qa_agent_version": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "FAILED",
+        "CONDITIONAL_PASS",
+        "QA_PASSED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "check_id",
+          "result"
+        ],
+        "properties": {
+          "check_id": {
+            "type": "string"
+          },
+          "requirement_id": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "passed",
+              "failed",
+              "blocked",
+              "not_run",
+              "not_applicable"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding_id",
+          "severity",
+          "category",
+          "description",
+          "status"
+        ],
+        "properties": {
+          "finding_id": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "BLOCKER",
+              "CRITICAL",
+              "MAJOR",
+              "MINOR",
+              "INFO"
+            ]
+          },
+          "category": {
+            "type": "string"
+          },
+          "requirement_id": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "expected": {
+            "type": "string"
+          },
+          "actual": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "reproduction_steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "closure_criteria": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "fixed_pending_recheck",
+              "closed",
+              "accepted_risk"
+            ]
+          }
+        }
+      }
+    },
+    "unverified_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recheck_of_report_id": {
+      "type": "string"
+    },
+    "human_risk_acceptance_ref": {
+      "type": "string"
+    }
+  }
+}
