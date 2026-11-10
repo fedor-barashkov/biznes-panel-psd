@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/roles/estimator-result/0.1",
+  "title": "Estimator Result for Grand-Smeta Interchange",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result_version",
+    "project_id",
+    "object_id",
+    "estimate_id",
+    "source_boq",
+    "normative_base",
+    "estimate_status",
+    "positions",
+    "data_preservation_check",
+    "open_questions"
+  ],
+  "properties": {
+    "result_version": {
+      "const": "0.1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "object_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "estimate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_boq": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boq_id",
+        "revision",
+        "approval_status"
+      ],
+      "properties": {
+        "boq_id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "approval_status": {
+          "const": "approved_by_gip"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        }
+      }
+    },
+    "normative_base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "edition"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "edition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "region": {
+          "type": "string"
+        },
+        "price_level_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "estimate_status": {
+      "enum": [
+        "draft",
+        "needs_review",
+        "approved",
+        "exported",
+        "blocked"
+      ]
+    },
+    "positions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "estimate_position_id",
+          "source_boq_position_id",
+          "norm_code",
+          "norm_name",
+          "unit",
+          "quantity",
+          "mapping_status"
+        ],
+        "properties": {
+          "estimate_position_id": {
+            "type": "string"
+          },
+          "source_boq_position_id": {
+            "type": "string"
+          },
+          "norm_code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "norm_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "quantity": {
+            "type": "number",
+            "minimum": 0
+          },
+          "resource_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "coefficients": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code",
+                "value"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "basis": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "mapping_status": {
+            "enum": [
+              "matched",
+              "alternative_proposed",
+              "unmatched",
+              "requires_human_review"
+            ]
+          },
+          "justification": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "data_preservation_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checked_fields",
+        "losses_detected",
+        "passed"
+      ],
+      "properties": {
+        "checked_fields": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "position_code",
+              "norm_code",
+              "norm_name",
+              "unit",
+              "quantity",
+              "resource_codes",
+              "coefficients"
+            ]
+          },
+          "minItems": 1
+        },
+        "losses_detected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "field",
+              "source_value",
+              "target_value"
+            ],
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "source_value": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ]
+              },
+              "target_value": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ]
+              },
+              "position_id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
