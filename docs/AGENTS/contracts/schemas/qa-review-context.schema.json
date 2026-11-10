@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/trusted-context/qa-review/0.1",
+  "title": "Trusted QA review context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "target_status",
+    "reviewer_agent_id",
+    "reviewer_independent"
+  ],
+  "properties": {
+    "target_status": {
+      "enum": [
+        "QA_PASSED",
+        "CONDITIONAL_PASS"
+      ]
+    },
+    "reviewer_agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewer_independent": {
+      "const": true
+    },
+    "risk_acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approved",
+        "owner_id",
+        "decision_id",
+        "finding_ids"
+      ],
+      "properties": {
+        "approved": {
+          "const": true
+        },
+        "owner_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "finding_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "target_status": {
+            "const": "CONDITIONAL_PASS"
+          }
+        },
+        "required": [
+          "target_status"
+        ]
+      },
+      "then": {
+        "required": [
+          "risk_acceptance"
+        ]
+      }
+    }
+  ]
+}
