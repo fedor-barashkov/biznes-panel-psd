@@ -110,6 +110,12 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
         self.doc["estimate_status"] = "approved"
         self.doc["positions"][0]["mapping_status"] = "matched"
         self.doc["open_questions"] = []
+        self.context["estimate_revision"] = "1"
+        self.context["approval_record"] = {
+            "approval_id": "APR-EST-1", "artifact_id": "EST-001",
+            "revision": "1", "decision": "approved", "actor_id": "user-3",
+            "actor_role": "ESTIMATOR_APPROVER", "authorized": True,
+        }
 
     def test_draft_allows_unresolved_mapping(self):
         self.assertEqual([], validate_estimator_result(self.doc))
@@ -128,12 +134,6 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
         self._make_approved()
         self.doc["estimate_status"] = "exported"
         self.context["round_trip_check"] = {"performed": True, "result": "identical"}
-        self.context["estimate_revision"] = "1"
-        self.context["approval_record"] = {
-            "approval_id": "APR-EST-1", "artifact_id": "EST-001",
-            "revision": "1", "decision": "approved", "actor_id": "user-3",
-            "actor_role": "ESTIMATOR_APPROVER", "authorized": True,
-        }
         self.assertEqual([], validate_estimator_result(self.doc, self.context))
         self.context["round_trip_check"]["result"] = "differences"
         self.assertIn("ESTIMATOR_ROUND_TRIP_NOT_PASSED",
