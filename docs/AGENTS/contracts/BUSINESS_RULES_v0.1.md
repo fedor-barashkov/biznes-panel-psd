@@ -81,7 +81,7 @@ JSON Schema проверяет структуру, типы и обязател�
 - `risk_acceptance`: `approved`, `owner_id`, `decision_id`, `finding_ids` (все открытые MAJOR/MINOR, а также все findings со статусом `accepted_risk`, принимаемые решением).
 - `document_revision`, `estimate_revision`.
 
-Это логические поля контекста, а не готовая модель аутентификации. В production они должны создаваться только доверенным компонентом и связываться с неизменяемыми записями аудита.
+Структуры контекста формализованы схемами `gip-approval-context.schema.json`, `pto-release-context.schema.json`, `estimator-approval-context.schema.json` и `qa-review-context.schema.json`; положительные/отрицательные fixtures находятся в `fixtures/`. Это проверка формы, а не готовая модель аутентификации: контекст должен создаваться только доверенным компонентом после проверки полномочий и связываться с неизменяемыми записями аудита.
 
 ## 8. Запуск и тестирование
 
