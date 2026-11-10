@@ -99,6 +99,7 @@ class PTOBusinessRulesTests(unittest.TestCase):
         self.context["approval_record"] = {
             "approval_id": "APR-PTO-1", "artifact_id": "ACT-001",
             "revision": "1", "decision": "approved", "actor_id": "user-2",
+            "actor_type": "human",
             "actor_role": "PTO_RELEASE_AUTHORITY", "authorized": True,
         }
         self.context["document_revision"] = "1"
@@ -155,6 +156,7 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
         self.context["approval_record"] = {
             "approval_id": "APR-EST-1", "artifact_id": "EST-001",
             "revision": "1", "decision": "approved", "actor_id": "user-3",
+            "actor_type": "human",
             "actor_role": "ESTIMATOR_APPROVER", "authorized": True,
         }
 
@@ -180,6 +182,7 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
         self.context["export_authorization"] = {
             "authorized": True, "artifact_id": "EST-001", "revision": "1",
             "operation": "grand_smeta.export", "actor_id": "user-3",
+            "actor_type": "human",
             "decision_id": "EXPORT-1",
         }
         self.assertEqual([], validate_estimator_result(self.doc, self.context))
@@ -213,6 +216,7 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
         self.context["export_authorization"] = {
             "authorized": True, "artifact_id": "EST-001", "revision": "other",
             "operation": "grand_smeta.export", "actor_id": "user-3",
+            "actor_type": "human",
             "decision_id": "EXPORT-1",
         }
         self.assertIn("ESTIMATOR_EXPORT_NOT_AUTHORIZED",
@@ -251,7 +255,7 @@ class QABusinessRulesTests(unittest.TestCase):
             "status": "open", "evidence_refs": ["EV-3"],
         })
         self.context["risk_acceptance"] = {
-            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-1",
+            "approved": True, "owner_id": "risk-owner-1", "actor_id": "risk-owner-1", "actor_type": "human", "decision_id": "RISK-1",
             "finding_ids": ["F-2"],
         }
         self.assertIn("QA_RISK_SCOPE_MISMATCH",
@@ -266,7 +270,7 @@ class QABusinessRulesTests(unittest.TestCase):
             "status": "open", "evidence_refs": ["EV-2"],
         })
         self.context["risk_acceptance"] = {
-            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-1",
+            "approved": True, "owner_id": "risk-owner-1", "actor_id": "risk-owner-1", "actor_type": "human", "decision_id": "RISK-1",
             "finding_ids": ["F-2"],
         }
         self.assertIn("QA_CONDITIONAL_NOT_VERIFIED",
@@ -280,7 +284,7 @@ class QABusinessRulesTests(unittest.TestCase):
             "status": "open", "evidence_refs": ["EV-2"],
         })
         self.context["risk_acceptance"] = {
-            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-1",
+            "approved": True, "owner_id": "risk-owner-1", "actor_id": "risk-owner-1", "actor_type": "human", "decision_id": "RISK-1",
             "finding_ids": ["F-2"],
         }
         self.assertEqual([], validate_qa_review_result(self.doc, self.context))
@@ -298,7 +302,7 @@ class QABusinessRulesTests(unittest.TestCase):
             "status": "open", "evidence_refs": ["EV-8"],
         })
         self.context["risk_acceptance"] = {
-            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-3",
+            "approved": True, "owner_id": "risk-owner-1", "actor_id": "risk-owner-1", "actor_type": "human", "decision_id": "RISK-3",
             "finding_ids": ["F-8"],
         }
         self.assertIn("QA_ACCEPTED_RISK_UNVERIFIED",
@@ -320,7 +324,7 @@ class QABusinessRulesTests(unittest.TestCase):
             "status": "open", "evidence_refs": ["EV-6"],
         })
         self.context["risk_acceptance"] = {
-            "approved": True, "owner_id": "risk-owner-1", "decision_id": "RISK-2",
+            "approved": True, "owner_id": "risk-owner-1", "actor_id": "risk-owner-1", "actor_type": "human", "decision_id": "RISK-2",
             "finding_ids": ["F-6"],
         }
         self.assertEqual([], validate_qa_review_result(self.doc, self.context))
