@@ -55,7 +55,7 @@ JSON Schema проверяет структуру, типы и обязател�
 - Проверка сохранности должна охватывать коды норм, наименования, единицы и количества.
 - Нельзя заявлять `passed=true`, если список `losses_detected` не пуст.
 - Для статуса `approved` все позиции должны иметь `mapping_status=matched`, отсутствовать открытые вопросы, а утверждение должно быть подтверждено доверенной записью уполномоченного сметчика.
-- Для `exported` дополнительно требуется успешное обратное сравнение с результатом `identical` и отдельное разрешение на экспорт. При любом расхождении экспорт блокируется до анализа и явного решения.
+- Для `exported` дополнительно требуется успешное обратное сравнение с результатом `identical` и отдельное доверенное разрешение `grand_smeta.export` на конкретную редакцию сметы (не то же самое, что утверждение сметы). При любом расхождении экспорт блокируется до анализа и явного решения.
 
 ## 6. Правила QA
 
@@ -74,6 +74,7 @@ JSON Schema проверяет структуру, типы и обязател�
 - `template_registry`: `template_id`, `revision`, `active`.
 - `boq_registry`: `boq_id`, `revision`, `approval_status`, `authorized`.
 - `round_trip_check`: `performed`, `result`.
+- `export_authorization`: `authorized`, `artifact_id`, `revision`, `operation`, `actor_id`, `decision_id`.
 - `reviewer_agent_id`, `reviewer_independent`.
 - `risk_acceptance`: `approved`, `owner_id`, `decision_id`, `finding_ids` (все открытые MAJOR/MINOR, принимаемые решением).
 - `document_revision`, `estimate_revision`, `minor_risk_policy_approved`.
