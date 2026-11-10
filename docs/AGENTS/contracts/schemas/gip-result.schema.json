@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/roles/gip-result/0.1",
+  "title": "GIP Bill of Quantities Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result_version",
+    "project_id",
+    "object_id",
+    "boq_id",
+    "revision",
+    "approval_status",
+    "source_documents",
+    "positions",
+    "issues",
+    "open_questions"
+  ],
+  "properties": {
+    "result_version": {
+      "const": "0.1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "object_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subobject_id": {
+      "type": "string"
+    },
+    "boq_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "approval_status": {
+      "enum": [
+        "draft",
+        "under_review",
+        "approved_by_gip",
+        "rejected",
+        "superseded"
+      ]
+    },
+    "source_documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "revision_id",
+          "document_code",
+          "locator",
+          "relation"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "document_code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "locator": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sheet": {
+                "type": "string"
+              },
+              "zone": {
+                "type": "string"
+              },
+              "table": {
+                "type": "string"
+              },
+              "row": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "element_id": {
+                "type": "string"
+              },
+              "fragment": {
+                "type": "string"
+              }
+            }
+          },
+          "relation": {
+            "enum": [
+              "extracted_from",
+              "calculated_from",
+              "interpreted_from",
+              "checked_against"
+            ]
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "positions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "position_id",
+          "work_name",
+          "unit",
+          "quantity",
+          "quantity_origin",
+          "evidence",
+          "verification_status"
+        ],
+        "properties": {
+          "position_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "location": {
+            "type": "string"
+          },
+          "work_code": {
+            "type": "string"
+          },
+          "work_group": {
+            "type": "string"
+          },
+          "work_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "quantity": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "quantity_origin": {
+            "enum": [
+              "extracted",
+              "calculated",
+              "interpreted",
+              "undetermined"
+            ]
+          },
+          "calculation_method": {
+            "type": "string"
+          },
+          "formula": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source_id",
+                "revision_id",
+                "document_code",
+                "locator",
+                "relation"
+              ],
+              "properties": {
+                "source_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "revision_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "document_code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "locator": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "sheet": {
+                      "type": "string"
+                    },
+                    "zone": {
+                      "type": "string"
+                    },
+                    "table": {
+                      "type": "string"
+                    },
+                    "row": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "element_id": {
+                      "type": "string"
+                    },
+                    "fragment": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "relation": {
+                  "enum": [
+                    "extracted_from",
+                    "calculated_from",
+                    "interpreted_from",
+                    "checked_against"
+                  ]
+                },
+                "excerpt": {
+                  "type": "string",
+                  "maxLength": 2000
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "verification_status": {
+            "enum": [
+              "verified",
+              "needs_review",
+              "conflicted",
+              "insufficient_data"
+            ]
+          },
+          "assumptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "issue_id",
+          "severity",
+          "description",
+          "source_refs"
+        ],
+        "properties": {
+          "issue_id": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "critical",
+              "major",
+              "minor",
+              "info"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "resolution_request": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
