@@ -12,6 +12,7 @@
     "decision": "approved",
     "actor_id": "user-pto-1",
     "actor_role": "PTO_RELEASE_AUTHORITY",
-    "authorized": true
+    "authorized": true,
+    "actor_type": "human"
   }
 }
