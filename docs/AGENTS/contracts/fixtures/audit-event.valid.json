@@ -1,0 +1,26 @@
+{
+  "event_id": "EVT-001",
+  "occurred_at": "2026-11-10T15:01:00Z",
+  "request_id": "REQ-001",
+  "correlation_id": "CORR-001",
+  "actor": {
+    "actor_id": "user-001",
+    "actor_type": "human",
+    "role": "GIP"
+  },
+  "action": "boq.approve",
+  "resource": {
+    "resource_type": "bill_of_quantities",
+    "resource_id": "BOQ-001",
+    "revision": 3,
+    "object_id": "OBJ-001"
+  },
+  "outcome": "committed",
+  "decision_id": "DEC-001",
+  "approval_record_id": "APR-001",
+  "policy_version": "AUTHZ-0.1",
+  "input_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "output_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "previous_event_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "event_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+}
