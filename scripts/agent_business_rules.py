@@ -33,6 +33,20 @@ def _approval_matches(context: dict, *, artifact_id: str, revision: Any, role: s
     )
 
 
+def _risk_acceptance_matches(context: dict, finding_ids: set[str]) -> bool:
+    """Check a trusted, explicitly scoped risk-acceptance record."""
+    risk = context.get("risk_acceptance", {})
+    accepted = set(risk.get("finding_ids", [])) if isinstance(risk, dict) else set()
+    return bool(
+        isinstance(risk, dict)
+        and risk.get("approved") is True
+        and risk.get("owner_id")
+        and risk.get("decision_id")
+        and finding_ids
+        and finding_ids.issubset(accepted)
+    )
+
+
 def validate_gip_result(doc: dict, context: dict | None = None) -> list[dict[str, str]]:
     context = context or {}
     issues: list[dict[str, str]] = []
@@ -125,10 +139,17 @@ def validate_estimator_result(doc: dict, context: dict | None = None) -> list[di
     issues: list[dict[str, str]] = []
     preservation = doc.get("data_preservation_check", {})
     losses = preservation.get("losses_detected", [])
-    required_fields = {"norm_code", "norm_name", "unit", "quantity"}
+    required_fields = {"position_code", "norm_code", "norm_name", "unit", "quantity"}
+    for position in doc.get("positions", []):
+        if position.get("resource_codes"):
+            required_fields.add("resource_codes")
+        if position.get("coefficients"):
+            required_fields.add("coefficients")
     checked = set(preservation.get("checked_fields", []))
     if losses and preservation.get("passed") is True:
         issues.append(_issue("ESTIMATOR_FALSE_PRESERVATION_PASS", "data_preservation_check", "Нельзя заявлять passed=true при обнаруженных потерях."))
+    if preservation.get("passed") is True and not required_fields.issubset(checked):
+        issues.append(_issue("ESTIMATOR_PRESERVATION_SCOPE_INCOMPLETE", "data_preservation_check", "Нельзя заявлять passed=true без проверки кодов позиций и норм, наименований, единиц, количеств, а также используемых ресурсов и коэффициентов."))
     if doc.get("estimate_status") in {"approved", "exported"}:
         registry = context.get("boq_registry", {})
         source_boq = doc.get("source_boq", {})
@@ -137,10 +158,16 @@ def validate_estimator_result(doc: dict, context: dict | None = None) -> list[di
             and registry.get("revision") == source_boq.get("revision")
             and registry.get("approval_status") == "approved_by_gip"
             and registry.get("authorized") is True
+            and isinstance(registry.get("position_ids"), list)
         ):
-            issues.append(_issue("ESTIMATOR_SOURCE_BOQ_NOT_VERIFIED", "source_boq", "Утверждение исходной ВОР не подтверждено доверенным реестром."))
+            issues.append(_issue("ESTIMATOR_SOURCE_BOQ_NOT_VERIFIED", "source_boq", "Утверждение исходной ВОР и её состав позиций не подтверждены доверенным реестром."))
+        else:
+            allowed_position_ids = set(registry["position_ids"])
+            for index, position in enumerate(doc.get("positions", [])):
+                if position.get("source_boq_position_id") not in allowed_position_ids:
+                    issues.append(_issue("ESTIMATOR_SOURCE_POSITION_UNKNOWN", f"positions[{index}].source_boq_position_id", "Позиция сметы не найдена в утверждённой редакции ВОР."))
         if losses or preservation.get("passed") is not True or not required_fields.issubset(checked):
-            issues.append(_issue("ESTIMATOR_PRESERVATION_GATE_FAILED", "data_preservation_check", "Для утверждения обязательны проверка кодов, наименований, единиц и количеств без потерь."))
+            issues.append(_issue("ESTIMATOR_PRESERVATION_GATE_FAILED", "data_preservation_check", "Для утверждения обязательна проверка всех применимых кодов, наименований, единиц, количеств, ресурсов и коэффициентов без потерь."))
         if doc.get("open_questions"):
             issues.append(_issue("ESTIMATOR_OPEN_QUESTIONS", "open_questions", "Нельзя утвердить смету с открытыми вопросами."))
         for index, position in enumerate(doc.get("positions", [])):
@@ -182,8 +209,12 @@ def validate_qa_review_result(doc: dict, context: dict | None = None) -> list[di
         if severe or major:
             issues.append(_issue("QA_BLOCKING_FINDINGS_REMAIN", "findings", "QA_PASSED невозможен при незакрытых BLOCKER/CRITICAL/MAJOR замечаниях."))
         minor_open = [f for f in unresolved if f.get("severity") == "MINOR"]
-        if minor_open and context.get("minor_risk_policy_approved") is not True:
-            issues.append(_issue("QA_MINOR_POLICY_MISSING", "findings", "Открытые MINOR допускаются только по явно утверждённой политике выпуска."))
+        accepted_risks = {f.get("finding_id") for f in findings if f.get("status") == "accepted_risk"}
+        scoped_minor = {f.get("finding_id") for f in minor_open}
+        if accepted_risks and not _risk_acceptance_matches(context, accepted_risks):
+            issues.append(_issue("QA_ACCEPTED_RISK_UNVERIFIED", "findings", "Статус accepted_risk требует доверенной записи принятия риска с перечислением всех замечаний."))
+        if scoped_minor and not _risk_acceptance_matches(context, scoped_minor):
+            issues.append(_issue("QA_MINOR_POLICY_MISSING", "findings", "Открытые MINOR допускаются только при отдельном утверждении владельцем риска с указанием каждого finding_id."))
     if status == "CONDITIONAL_PASS":
         if not independent:
             issues.append(_issue("QA_CONDITIONAL_NOT_INDEPENDENT", "status", "CONDITIONAL_PASS требует независимого проверяющего."))
@@ -191,15 +222,11 @@ def validate_qa_review_result(doc: dict, context: dict | None = None) -> list[di
             issues.append(_issue("QA_CONDITIONAL_HAS_SEVERE_FINDINGS", "findings", "CONDITIONAL_PASS запрещён при незакрытых BLOCKER/CRITICAL замечаниях."))
         if not doc.get("checks") or any(c.get("result") not in {"passed", "not_applicable"} for c in doc.get("checks", [])) or doc.get("unverified_items"):
             issues.append(_issue("QA_CONDITIONAL_NOT_VERIFIED", "checks", "CONDITIONAL_PASS невозможен при пропущенных проверках или непроверенных пунктах."))
-        risk = context.get("risk_acceptance", {})
-        if not (risk.get("approved") is True and risk.get("owner_id") and risk.get("decision_id")):
-            issues.append(_issue("QA_RISK_NOT_ACCEPTED", "status", "CONDITIONAL_PASS требует отдельного решения и идентифицированного владельца риска."))
         open_risk_ids = {f.get("finding_id") for f in findings if f.get("severity") in {"MAJOR", "MINOR"} and f.get("status") not in {"closed", "accepted_risk"}}
-        accepted_ids = set(risk.get("finding_ids", []))
         if not open_risk_ids:
             issues.append(_issue("QA_CONDITIONAL_WITHOUT_OPEN_RISK", "findings", "CONDITIONAL_PASS должен отражать конкретный открытый риск MAJOR/MINOR."))
-        elif not open_risk_ids.issubset(accepted_ids):
-            issues.append(_issue("QA_RISK_SCOPE_MISMATCH", "findings", "Запись принятия риска должна перечислять каждый открытый MAJOR/MINOR finding."))
+        elif not _risk_acceptance_matches(context, open_risk_ids):
+            issues.append(_issue("QA_RISK_SCOPE_MISMATCH", "findings", "Доверенная запись принятия риска должна быть утверждена владельцем и перечислять каждый открытый MAJOR/MINOR finding."))
     return issues
 
 
