@@ -29,6 +29,8 @@
       "required": [
         "approved",
         "owner_id",
+        "actor_id",
+        "actor_type",
         "decision_id",
         "finding_ids"
       ],
@@ -52,6 +54,13 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_type": {
+          "const": "human"
         }
       }
     }
