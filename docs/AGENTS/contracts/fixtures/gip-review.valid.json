@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1",
+  "project_id": "PRJ-001",
+  "object_id": "OBJ-001",
+  "subobject_id": "SUB-01",
+  "source_set": [
+    {
+      "source_id": "SRC-01",
+      "document_type": "working_documentation",
+      "document_code": "КЖ-01",
+      "revision": "Р1",
+      "source_status": "current",
+      "locator": {
+        "sheet": "Лист 5"
+      }
+    }
+  ],
+  "review_status": "draft",
+  "boq_items": [
+    {
+      "item_id": "BOQ-01",
+      "work_code": "MONO-01",
+      "work_name": "Бетонирование плиты",
+      "unit": "м³",
+      "quantity": 12.5,
+      "quantity_basis": "calculated",
+      "calculation": {
+        "method": "По геометрии плиты",
+        "expression": "10 × 5 × 0.25"
+      },
+      "source_refs": [
+        {
+          "source_id": "SRC-01",
+          "locator": {
+            "sheet": "Лист 5",
+            "drawing_number": "КЖ-01"
+          }
+        }
+      ],
+      "review_state": "checked"
+    }
+  ],
+  "issues": [],
+  "open_questions": []
+}
