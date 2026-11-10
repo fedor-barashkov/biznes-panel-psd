@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/roles/pto-result/0.1",
+  "title": "PTO Executive Documentation Draft Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result_version",
+    "project_id",
+    "object_id",
+    "document_id",
+    "document_type",
+    "template",
+    "document_status",
+    "fields",
+    "source_documents",
+    "validation",
+    "approval_required"
+  ],
+  "properties": {
+    "result_version": {
+      "const": "0.1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "object_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subobject_id": {
+      "type": "string"
+    },
+    "document_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "document_type": {
+      "enum": [
+        "АОСР",
+        "executive_diagram",
+        "setting_out_act",
+        "general_work_log",
+        "special_journal",
+        "other"
+      ]
+    },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "template_id",
+        "revision"
+      ],
+      "properties": {
+        "template_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "normative_basis": {
+          "type": "string"
+        }
+      }
+    },
+    "document_status": {
+      "enum": [
+        "draft",
+        "needs_input",
+        "under_review",
+        "approved_for_release",
+        "released",
+        "blocked"
+      ]
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field_id",
+          "value_status",
+          "source_refs"
+        ],
+        "properties": {
+          "field_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "null"
+            ]
+          },
+          "value_status": {
+            "enum": [
+              "confirmed",
+              "extracted_unverified",
+              "user_supplied",
+              "missing",
+              "conflicted",
+              "not_applicable"
+            ]
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "source_documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "revision_id",
+          "document_code",
+          "locator",
+          "relation"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "document_code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "locator": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sheet": {
+                "type": "string"
+              },
+              "zone": {
+                "type": "string"
+              },
+              "table": {
+                "type": "string"
+              },
+              "row": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "element_id": {
+                "type": "string"
+              },
+              "fragment": {
+                "type": "string"
+              }
+            }
+          },
+          "relation": {
+            "enum": [
+              "extracted_from",
+              "calculated_from",
+              "interpreted_from",
+              "checked_against"
+            ]
+          },
+          "excerpt": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        }
+      }
+    },
+    "related_document_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "appendices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "appendix_type",
+          "status"
+        ],
+        "properties": {
+          "appendix_type": {
+            "type": "string"
+          },
+          "document_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "attached",
+              "not_required",
+              "missing",
+              "pending_confirmation"
+            ]
+          },
+          "basis": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "findings"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "approval_required": {
+      "const": true
+    }
+  }
+}
