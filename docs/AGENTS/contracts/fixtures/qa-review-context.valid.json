@@ -1,0 +1,13 @@
+{
+  "target_status": "CONDITIONAL_PASS",
+  "reviewer_agent_id": "construction.qa.2",
+  "reviewer_independent": true,
+  "risk_acceptance": {
+    "approved": true,
+    "owner_id": "risk-owner-1",
+    "decision_id": "RISK-001",
+    "finding_ids": [
+      "F-001"
+    ]
+  }
+}
