@@ -8,6 +8,7 @@
 - [Контракт интеграции](INTEGRATION_CONTRACT_v0.1.md) — взаимодействие клиентов, агентов и адаптеров.
 - [План испытаний](TEST_PLAN_v0.1.md) — проверки контрактов, предметных ролей и QA.
 - [Спецификация оркестратора](ORCHESTRATOR_SPEC_v0.1.md) — маршрутизация, workflow, состояния задач, QA gate, согласования и аудит.
+- [Архитектура Runtime MVP](RUNTIME_ARCHITECTURE_v0.1.md) — компоненты исполняемого ядра, границы доверия, локальный Windows/offline-first режим, этапы MVP и критерии приёмки.
 - [Граница доверия и авторизация](TRUST_BOUNDARY_SPEC_v0.1.md) — human-only подтверждения, PDP/PEP/PIP, replay protection и append-only аудит.
 - [Архитектура экосистемы](../ECOSYSTEM/ARCHITECTURE_v0.1.md) — границы независимых продуктов и репозиториев.
 
