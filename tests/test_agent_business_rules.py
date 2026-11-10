@@ -156,6 +156,13 @@ class EstimatorBusinessRulesTests(unittest.TestCase):
         self._make_approved()
         self.doc["estimate_status"] = "exported"
         self.context["round_trip_check"] = {"performed": True, "result": "identical"}
+        self.assertIn("ESTIMATOR_EXPORT_NOT_AUTHORIZED",
+                      {x["code"] for x in validate_estimator_result(self.doc, self.context)})
+        self.context["export_authorization"] = {
+            "authorized": True, "artifact_id": "EST-001", "revision": "1",
+            "operation": "grand_smeta.export", "actor_id": "user-3",
+            "decision_id": "EXPORT-1",
+        }
         self.assertEqual([], validate_estimator_result(self.doc, self.context))
         self.context["round_trip_check"]["result"] = "differences"
         self.assertIn("ESTIMATOR_ROUND_TRIP_NOT_PASSED",
