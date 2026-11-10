@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.construction-ai.local/roles/qa-verification-run/0.1",
+  "title": "Construction AI QA Verification Run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "target",
+    "criteria_version",
+    "reviewer_id",
+    "independence",
+    "checks",
+    "findings",
+    "verdict",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "artifact_version",
+        "author_id"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string"
+        },
+        "artifact_version": {
+          "type": "string"
+        },
+        "author_id": {
+          "type": "string"
+        }
+      }
+    },
+    "criteria_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewer_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "independence": {
+      "enum": [
+        "independent",
+        "participated_in_creation",
+        "not_independent"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "check_id",
+          "requirement_ref",
+          "status",
+          "method"
+        ],
+        "properties": {
+          "check_id": {
+            "type": "string"
+          },
+          "requirement_ref": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "passed",
+              "failed",
+              "blocked",
+              "not_verified",
+              "not_applicable"
+            ]
+          },
+          "method": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding_id",
+          "severity",
+          "description",
+          "requirement_ref",
+          "status"
+        ],
+        "properties": {
+          "finding_id": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "blocker",
+              "critical",
+              "major",
+              "minor",
+              "info"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requirement_ref": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "open",
+              "fixed_pending_retest",
+              "closed",
+              "accepted_risk"
+            ]
+          },
+          "closure_evidence_ref": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "verdict": {
+      "enum": [
+        "not_started",
+        "in_progress",
+        "blocked",
+        "failed",
+        "conditional_pass",
+        "qa_passed",
+        "not_verified"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "approved_risk_owner": {
+      "type": "string"
+    }
+  }
+}
