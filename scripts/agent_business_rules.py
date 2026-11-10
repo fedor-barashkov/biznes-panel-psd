@@ -173,8 +173,8 @@ def validate_qa_review_result(doc: dict, context: dict | None = None) -> list[di
     if status == "QA_PASSED":
         if not independent:
             issues.append(_issue("QA_NOT_INDEPENDENT", "status", "QA_PASSED требует независимого проверяющего, отличного от автора результата."))
-        if any(c.get("result") not in {"passed", "not_applicable"} for c in doc.get("checks", [])):
-            issues.append(_issue("QA_REQUIRED_CHECKS_INCOMPLETE", "checks", "QA_PASSED невозможен при пропущенных, заблокированных или проваленных проверках."))
+        if not doc.get("checks") or any(c.get("result") not in {"passed", "not_applicable"} for c in doc.get("checks", [])):
+            issues.append(_issue("QA_REQUIRED_CHECKS_INCOMPLETE", "checks", "QA_PASSED невозможен без проверок или при пропущенных, заблокированных и проваленных проверках."))
         if any(c.get("result") == "passed" and not c.get("evidence_refs") for c in doc.get("checks", [])):
             issues.append(_issue("QA_CHECK_WITHOUT_EVIDENCE", "checks", "Каждая пройденная проверка должна иметь ссылку на доказательство."))
         if doc.get("unverified_items"):
@@ -189,11 +189,17 @@ def validate_qa_review_result(doc: dict, context: dict | None = None) -> list[di
             issues.append(_issue("QA_CONDITIONAL_NOT_INDEPENDENT", "status", "CONDITIONAL_PASS требует независимого проверяющего."))
         if severe:
             issues.append(_issue("QA_CONDITIONAL_HAS_SEVERE_FINDINGS", "findings", "CONDITIONAL_PASS запрещён при незакрытых BLOCKER/CRITICAL замечаниях."))
+        if not doc.get("checks") or any(c.get("result") not in {"passed", "not_applicable"} for c in doc.get("checks", [])) or doc.get("unverified_items"):
+            issues.append(_issue("QA_CONDITIONAL_NOT_VERIFIED", "checks", "CONDITIONAL_PASS невозможен при пропущенных проверках или непроверенных пунктах."))
         risk = context.get("risk_acceptance", {})
         if not (risk.get("approved") is True and risk.get("owner_id") and risk.get("decision_id")):
             issues.append(_issue("QA_RISK_NOT_ACCEPTED", "status", "CONDITIONAL_PASS требует отдельного решения и идентифицированного владельца риска."))
-        if not any(f.get("severity") in {"MAJOR", "MINOR"} and f.get("status") not in {"closed", "accepted_risk"} for f in findings):
+        open_risk_ids = {f.get("finding_id") for f in findings if f.get("severity") in {"MAJOR", "MINOR"} and f.get("status") not in {"closed", "accepted_risk"}}
+        accepted_ids = set(risk.get("finding_ids", []))
+        if not open_risk_ids:
             issues.append(_issue("QA_CONDITIONAL_WITHOUT_OPEN_RISK", "findings", "CONDITIONAL_PASS должен отражать конкретный открытый риск MAJOR/MINOR."))
+        elif not open_risk_ids.issubset(accepted_ids):
+            issues.append(_issue("QA_RISK_SCOPE_MISMATCH", "findings", "Запись принятия риска должна перечислять каждый открытый MAJOR/MINOR finding."))
     return issues
 
 
