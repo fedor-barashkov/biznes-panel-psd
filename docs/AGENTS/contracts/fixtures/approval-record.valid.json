@@ -1,0 +1,15 @@
+{
+  "approval_id": "APR-001",
+  "request_id": "REQ-001",
+  "action_id": "ACTION-001",
+  "target": "BOQ-001@2",
+  "decision": "approved",
+  "decided_by": "human-user-1",
+  "actor_type": "human",
+  "decided_at": "2026-11-10T14:00:00Z",
+  "policy_version": "AUTHZ-0.1",
+  "scope": [
+    "project:PRJ-001",
+    "object:OBJ-001"
+  ]
+}
