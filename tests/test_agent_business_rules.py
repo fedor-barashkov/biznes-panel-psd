@@ -34,10 +34,23 @@ class GIPBusinessRulesTests(unittest.TestCase):
         doc["positions"][0]["verification_status"] = "verified"
         context = {"approval_record": {
             "approval_id": "APR-1", "artifact_id": "BOQ-001", "revision": 1,
-            "decision": "approved", "actor_id": "user-1", "actor_role": "GIP",
+            "decision": "approved", "actor_id": "user-1", "actor_type": "human", "actor_role": "GIP",
             "authorized": True,
         }}
         self.assertEqual([], validate_gip_result(doc, context))
+
+    def test_agent_or_service_cannot_self_approve_boq(self):
+        doc = copy.deepcopy(self.doc)
+        doc["approval_status"] = "approved_by_gip"
+        doc["open_questions"] = []
+        doc["positions"][0]["verification_status"] = "verified"
+        context = {"approval_record": {
+            "approval_id": "APR-SVC-1", "artifact_id": "BOQ-001", "revision": 1,
+            "decision": "approved", "actor_id": "service-agent", "actor_type": "service",
+            "actor_role": "GIP", "authorized": True,
+        }}
+        self.assertIn("GIP_APPROVAL_NOT_AUTHORIZED",
+                      {x["code"] for x in validate_gip_result(doc, context)})
 
     def test_approved_boq_without_approval_is_blocked(self):
         doc = copy.deepcopy(self.doc)
@@ -54,7 +67,7 @@ class GIPBusinessRulesTests(unittest.TestCase):
                           "description": "Конфликт отметок", "source_refs": []}]
         context = {"approval_record": {
             "approval_id": "APR-1", "artifact_id": "BOQ-001", "revision": 1,
-            "decision": "approved", "actor_id": "user-1", "actor_role": "GIP",
+            "decision": "approved", "actor_id": "user-1", "actor_type": "human", "actor_role": "GIP",
             "authorized": True,
         }}
         self.assertIn("GIP_APPROVAL_HAS_BLOCKING_ISSUES",
