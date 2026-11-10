@@ -1,0 +1,26 @@
+{
+  "decision_id": "DEC-002",
+  "request_id": "REQ-002",
+  "actor": {
+    "actor_id": "agent.pto",
+    "actor_type": "agent",
+    "role": "PTO"
+  },
+  "action": "grand_smeta.export",
+  "resource": {
+    "resource_type": "estimate",
+    "resource_id": "EST-001",
+    "revision": "2"
+  },
+  "effect": "allow",
+  "scope": [
+    "object:OBJ-001"
+  ],
+  "policy_version": "AUTHZ-0.1",
+  "issued_at": "2026-11-10T15:00:00Z",
+  "expires_at": "2026-11-10T15:05:00Z",
+  "nonce": "0123456789abcdef0123456789abcdef",
+  "reason_codes": [
+    "BAD_ACTOR"
+  ]
+}
